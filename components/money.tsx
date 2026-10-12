@@ -11,20 +11,14 @@ export function Money({
   if (value.status === "mock") {
     return (
       <span className={className}>
-        <span className="font-mono tabular-nums">{formatUsd(value.usd)}</span>
-        <span className="ml-1.5 align-middle text-[10px] tracking-widest text-cinnabar">
-          示意
-        </span>
+        <span className="tabular-nums">{formatUsd(value.usd)}</span>
+        <span className="ml-1.5 align-middle text-xs text-muted-foreground">示意</span>
       </span>
     );
   }
 
   if (value.status === "reported") {
-    return (
-      <span className={`${className} font-mono tabular-nums`}>
-        {formatUsd(value.usd)}
-      </span>
-    );
+    return <span className={`${className} tabular-nums`}>{formatUsd(value.usd)}</span>;
   }
 
   if (value.status === "undisclosed") {

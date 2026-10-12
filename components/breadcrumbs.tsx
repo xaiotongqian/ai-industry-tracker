@@ -1,8 +1,6 @@
 import Link from "next/link";
+import { focusRing } from "@/lib/ui";
 import { cn } from "@/lib/utils";
-
-const focusRing =
-  "rounded-sm focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none";
 
 export function Breadcrumbs({
   items,
@@ -13,7 +11,7 @@ export function Breadcrumbs({
 }) {
   return (
     <nav aria-label="面包屑" className={className}>
-      <ol className="flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-xs text-muted-foreground">
+      <ol className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted-foreground">
         {items.map((item, index) => {
           const last = index === items.length - 1;
           return (
@@ -28,7 +26,13 @@ export function Breadcrumbs({
                   {item.label}
                 </span>
               ) : (
-                <Link href={item.href} className={cn("hover:text-primary", focusRing)}>
+                <Link
+                  href={item.href}
+                  className={cn(
+                    "motion-safe:transition-colors motion-safe:duration-200 hover:text-foreground",
+                    focusRing,
+                  )}
+                >
                   {item.label}
                 </Link>
               )}

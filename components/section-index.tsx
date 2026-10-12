@@ -1,14 +1,12 @@
 import Link from "next/link";
 import { sections, type SectionId } from "@/lib/sections";
+import { focusRing } from "@/lib/ui";
 import { cn } from "@/lib/utils";
-
-const focusRing =
-  "rounded-sm focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none";
 
 export function SectionIndex({ current }: { current: SectionId | "company" }) {
   return (
-    <nav aria-label="栏目索引" className="mt-5">
-      <ol className="flex flex-wrap gap-x-4 gap-y-2">
+    <nav aria-label="栏目索引" className="mt-8">
+      <ol className="flex flex-wrap gap-x-5 gap-y-2">
         {sections.map((section) => {
           const onPage = section.id === current;
           const inSection = current === "company" && section.id === "landscape";
@@ -19,12 +17,13 @@ export function SectionIndex({ current }: { current: SectionId | "company" }) {
                 href={section.href}
                 aria-current={onPage ? "page" : inSection ? "location" : undefined}
                 className={cn(
-                  "font-mono text-[11px] tracking-wide",
+                  "text-sm motion-safe:transition-colors motion-safe:duration-200",
                   focusRing,
-                  here ? "text-primary" : "text-muted-foreground hover:text-foreground",
+                  here ? "text-foreground" : "text-muted-foreground hover:text-foreground",
                 )}
               >
-                {section.index} {section.label}
+                <span className="mr-1.5 text-muted-foreground">{section.index}</span>
+                {section.label}
               </Link>
             </li>
           );

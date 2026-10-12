@@ -6,10 +6,8 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { CADENCE_LABEL } from "@/data/types";
 import { sections } from "@/lib/sections";
+import { focusRingDark, frameClass } from "@/lib/ui";
 import { cn } from "@/lib/utils";
-
-const focusRing =
-  "focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none";
 
 export function SiteHeader() {
   const pathname = usePathname();
@@ -66,7 +64,7 @@ function SiteHeaderFrame({ pathname }: { pathname: string }) {
   return (
     <header
       ref={headerRef}
-      className="sticky top-0 z-40 border-b border-border bg-background"
+      className="sticky top-0 z-40 bg-black/80 text-white shadow-[inset_0_-1px_0_rgba(255,255,255,0.14)] backdrop-blur-xl backdrop-saturate-150 supports-[backdrop-filter]:bg-black/75"
       onBlur={(event) => {
         if (!open) return;
         const next = event.relatedTarget;
@@ -75,36 +73,20 @@ function SiteHeaderFrame({ pathname }: { pathname: string }) {
         setOpen(false);
       }}
     >
-      <div className="h-1 bg-primary" />
-      <p className="mx-auto max-w-6xl px-4 pt-1.5 font-mono text-[11px] text-muted-foreground sm:px-6">
-        公开源接入 · 示意标 Demo
-      </p>
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
+      <div className={cn(frameClass, "flex h-12 items-center justify-between gap-4")}>
         <Link
           href="/"
-          className={cn("group flex items-center gap-3 rounded-sm", focusRing)}
+          className={cn("flex items-baseline gap-2", focusRingDark)}
         >
-          <span
-            aria-hidden
-            className="grid size-11 -rotate-6 place-items-center border-2 border-cinnabar font-serif text-sm text-cinnabar"
-          >
-            纬
-          </span>
-          <span>
-            <span className="block font-serif text-3xl leading-none tracking-tight">
-              纬图
-            </span>
-            <span className="mt-1 block font-mono text-[10px] tracking-[0.28em] text-muted-foreground">
-              WEITU · AI ATLAS
-            </span>
-          </span>
+          <span className="text-[17px] font-semibold tracking-tight">纬图</span>
+          <span className="text-xs tracking-[0.16em] text-white/60">WEITU</span>
         </Link>
         <button
           ref={buttonRef}
           type="button"
           className={cn(
-            "inline-flex h-11 items-center gap-2 border border-foreground/30 px-3 font-mono text-xs md:hidden",
-            focusRing,
+            "inline-flex h-11 items-center gap-2 px-1 text-[13px] text-white/80 md:hidden",
+            focusRingDark,
           )}
           aria-expanded={open}
           aria-controls="site-menu"
@@ -117,7 +99,7 @@ function SiteHeaderFrame({ pathname }: { pathname: string }) {
           )}
           {open ? "关闭" : "栏目"}
         </button>
-        <nav aria-label="栏目" className="hidden flex-wrap justify-end gap-1 md:flex">
+        <nav aria-label="栏目" className="hidden h-12 items-stretch md:flex">
           {sections.map((section) => {
             const active = section.match(pathname);
             return (
@@ -126,22 +108,18 @@ function SiteHeaderFrame({ pathname }: { pathname: string }) {
                 href={section.href}
                 aria-current={active ? "page" : undefined}
                 className={cn(
-                  "inline-flex items-baseline gap-1.5 px-2.5 py-1.5 text-sm whitespace-nowrap",
-                  focusRing,
-                  active
-                    ? "bg-primary text-primary-foreground"
-                    : "text-foreground hover:bg-muted",
+                  "relative inline-flex h-12 items-center gap-1.5 px-3 text-[13px] text-white/60 motion-safe:transition-colors motion-safe:duration-200 hover:text-white",
+                  focusRingDark,
+                  active && "text-white",
                 )}
               >
-                <span
-                  className={cn(
-                    "font-mono text-[10px]",
-                    active ? "text-primary-foreground/75" : "text-muted-foreground",
-                  )}
-                >
+                <span className={cn("text-[11px]", active ? "text-white/70" : "text-white/40")}>
                   {section.index}
                 </span>
                 {section.label}
+                {active ? (
+                  <span aria-hidden className="absolute inset-x-3 bottom-0 h-px bg-white" />
+                ) : null}
               </Link>
             );
           })}
@@ -151,57 +129,36 @@ function SiteHeaderFrame({ pathname }: { pathname: string }) {
         id="site-menu"
         ref={panelRef}
         hidden={!open}
-        className="border-t border-border md:hidden"
+        className="border-t border-white/10 bg-black md:hidden"
       >
-        <nav aria-label="栏目" className="mx-auto max-w-6xl px-4 py-2 sm:px-6">
+        <nav aria-label="栏目" className={cn(frameClass, "py-2")}>
           <ul>
             {sections.map((section) => {
               const active = section.match(pathname);
               return (
-                <li key={section.href} className="border-b border-border last:border-b-0">
+                <li key={section.href} className="border-b border-white/10 last:border-b-0">
                   <Link
                     href={section.href}
                     aria-current={active ? "page" : undefined}
                     className={cn(
-                      "flex min-h-11 flex-col justify-center px-3 py-2",
-                      focusRing,
-                      active
-                        ? "bg-primary text-primary-foreground"
-                        : "hover:bg-muted",
+                      "flex min-h-11 flex-col justify-center py-3",
+                      focusRingDark,
+                      active ? "text-white" : "text-white/70",
                     )}
                     onClick={() => setOpen(false)}
                   >
                     <span className="flex items-baseline justify-between gap-3">
                       <span className="flex items-baseline gap-2">
-                        <span
-                          className={cn(
-                            "font-mono text-[10px]",
-                            active
-                              ? "text-primary-foreground/75"
-                              : "text-muted-foreground",
-                          )}
-                        >
+                        <span className={cn("text-xs", active ? "text-white/70" : "text-white/40")}>
                           {section.index}
                         </span>
-                        <span className="font-serif text-xl">{section.label}</span>
+                        <span className="text-2xl font-medium tracking-tight">{section.label}</span>
                       </span>
-                      <span
-                        className={cn(
-                          "font-mono text-[10px]",
-                          active
-                            ? "text-primary-foreground/80"
-                            : "text-muted-foreground",
-                        )}
-                      >
+                      <span className="text-xs text-white/45">
                         {CADENCE_LABEL[section.cadence]}
                       </span>
                     </span>
-                    <span
-                      className={cn(
-                        "mt-1 text-xs",
-                        active ? "text-primary-foreground/80" : "text-muted-foreground",
-                      )}
-                    >
+                    <span className={cn("mt-1 text-sm", active ? "text-white/70" : "text-white/45")}>
                       {section.summary}
                     </span>
                   </Link>
