@@ -55,8 +55,9 @@ export function FundingLedger({
                   {company && company.name !== company.nameEn ? ` · ${company.nameEn}` : ""}
                 </p>
                 <p className="mt-1 text-sm leading-6">
-                  {origin === "demo" ? "投资人（示意）" : "投资人"}：
-                  {round.investors.length > 0 ? round.investors.join("、") : "未披露"}
+                  {`${origin === "demo" ? "投资人（示意）" : "投资人"}：${
+                    round.investors.length > 0 ? round.investors.join("、") : "未披露"
+                  }`}
                   {round.sourceUrl ? (
                     <>
                       {" · "}

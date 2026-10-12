@@ -64,7 +64,7 @@ Epoch 这张表没有质量、速度、价格，所以不拿来填模型页。
 
 `GET https://aifunding.me/api/v1/rounds?limit=30`
 
-此环境对该域名返回 403，没有匿名可读的 JSON。失败后改用 Data Cube 融资页（https://www.datacubeai.space/funding）链出的公开 JSON：
+匿名请求有时返回 403。失败后改用 Data Cube 融资页（https://www.datacubeai.space/funding）链出的公开 JSON：
 
 `GET https://api-production-3ee5.up.railway.app/api/deals?deal_type=funding&limit=30`
 

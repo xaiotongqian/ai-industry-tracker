@@ -66,7 +66,7 @@ export async function loadFunding(): Promise<Loaded<FundingRound>> {
         sourceName: "AI Funding Tracker",
         sourceHref: "https://www.datacubeai.space/funding",
         fetchedAt: new Date().toISOString(),
-        note: "aifunding.me 没有匿名可读的数据（此环境为 403）。列表改用 Data Cube 融资页公开的 JSON：最近的融资，不含并购。美元金额才计入合计，证据摘录不转载。",
+        note: "aifunding.me 这一轮没有匿名可读的数据。列表改用 Data Cube 融资页公开的 JSON：最近的融资，不含并购。美元金额才计入合计，证据摘录不转载。",
       };
     }
   } catch {
@@ -110,7 +110,7 @@ async function fetchAiFunding(companies: Company[]): Promise<FundingRound[] | nu
         announcedOn,
         investors: (row.investors ?? [])
           .map((investor) => investor.name?.trim() ?? "")
-          .filter(Boolean),
+          .filter(isNamedInvestor),
       });
     }
     return rounds;
@@ -177,13 +177,19 @@ function investorNames(value: unknown): string[] {
   if (!Array.isArray(value)) return [];
   const names: string[] = [];
   for (const item of value) {
-    if (typeof item === "string" && item.trim()) names.push(item.trim());
+    if (typeof item === "string" && isNamedInvestor(item)) names.push(item.trim());
     else if (item && typeof item === "object" && "name" in item) {
       const name = (item as { name?: unknown }).name;
-      if (typeof name === "string" && name.trim()) names.push(name.trim());
+      if (typeof name === "string" && isNamedInvestor(name)) names.push(name.trim());
     }
   }
   return names;
+}
+
+function isNamedInvestor(value: string): boolean {
+  const name = value.trim();
+  if (!name) return false;
+  return !/^(undisclosed|unknown|n\/a|na|none|not disclosed|未披露)$/i.test(name);
 }
 
 function roundLabel(value: string | null | undefined): string {

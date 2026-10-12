@@ -183,6 +183,18 @@ function demoCompanies(note: string): Loaded<Company> {
   };
 }
 
+function isProductLine(nameZh: string, nameEn: string, companies: Company[]): boolean {
+  const labels = [nameZh, nameEn].filter(Boolean).map((label) => label.toLowerCase());
+  for (const company of companies) {
+    for (const base of [company.name, company.nameEn]) {
+      if (base.length < 4) continue;
+      const prefix = `${base.toLowerCase()} `;
+      if (labels.some((label) => label.startsWith(prefix))) return true;
+    }
+  }
+  return false;
+}
+
 function applyFuturex(
   row: FuturexCompany,
   merged: Company[],
@@ -197,6 +209,7 @@ function applyFuturex(
     lookupExact(nameEn, exact) ??
     lookupExact(nameZh, exact) ??
     lookupExact(hostStem(row.website), exact);
+  if (!existingSlug && isProductLine(nameZh, nameEn, merged)) return "skipped";
   if (existingSlug) {
     const target = merged.find((company) => company.slug === existingSlug);
     if (!target) return "skipped";
