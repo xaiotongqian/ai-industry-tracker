@@ -148,7 +148,7 @@ function SiteHeaderFrame({ pathname }: { pathname: string }) {
                         <span className="text-2xl font-medium tracking-tight">{section.label}</span>
                       </span>
                       <span className="text-xs text-white/65">
-                        {CADENCE_LABEL[section.cadence]}
+                        {section.menuNote ?? CADENCE_LABEL[section.cadence]}
                       </span>
                     </span>
                     <span className={cn("mt-1 text-sm", active ? "text-white/75" : "text-white/65")}>
