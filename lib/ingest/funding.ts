@@ -79,7 +79,7 @@ function demoFunding(note: string): Loaded<FundingRound> {
   return {
     items: demoRounds,
     origin: "demo",
-    sourceName: "纬图示意轮次",
+    sourceName: "AI纵横示意轮次",
     fetchedAt: SAMPLE_AS_OF,
     note,
   };

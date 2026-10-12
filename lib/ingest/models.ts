@@ -51,7 +51,7 @@ function demoModelsSet(note: string): Loaded<ModelRow> {
   return {
     items: demoModels,
     origin: "demo",
-    sourceName: "纬图示意表",
+    sourceName: "AI纵横示意表",
     sourceHref: "https://artificialanalysis.ai/data-api/docs",
     fetchedAt: SAMPLE_AS_OF,
     note,

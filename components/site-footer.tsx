@@ -15,8 +15,8 @@ export function SiteFooter() {
         )}
       >
         <div>
-          <p className="text-3xl font-semibold tracking-tight">纬图</p>
-          <p className="mt-1 text-xs tracking-[0.16em] text-white/60">WEITU</p>
+          <p className="text-3xl font-semibold tracking-tight">AI纵横</p>
+          <p className="mt-1 text-xs tracking-[0.16em] text-white/60">AI ZONGHENG</p>
           <p className="mt-5 max-w-sm text-[15px] leading-7 text-white/60">
             模型、融资和产业地图放在同一张纸上。能读到的公开源直接进页面，读不到的格子仍标示意。
           </p>

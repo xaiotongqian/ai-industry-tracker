@@ -94,7 +94,7 @@ Epoch 这张表没有质量、速度、价格，所以不拿来填模型页。
 
 - 地址：`https://yc-oss.github.io/api/companies/all.json`
 
-FutureX 加上 40 家编辑样本仍不足 200 时，从这份 JSON 里取标签含 `AI`、`Generative AI` 或 `Machine Learning`，且状态为 Active 或 Public 的公司，优先 `top_company`，补到 200 家为止。简介用 one-liner。融资和估值保持未披露。类别是纬图按标签归的，档案页会写明。
+FutureX 加上 40 家编辑样本仍不足 200 时，从这份 JSON 里取标签含 `AI`、`Generative AI` 或 `Machine Learning`，且状态为 Active 或 Public 的公司，优先 `top_company`，补到 200 家为止。简介用 one-liner。融资和估值保持未披露。类别是AI纵横按标签归的，档案页会写明。
 
 编辑样本里的 slug（例如 `deepseek`）始终保留，机构页不会因为合并而改地址。
 

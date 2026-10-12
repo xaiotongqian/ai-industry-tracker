@@ -77,8 +77,8 @@ function SiteHeaderFrame({ pathname }: { pathname: string }) {
           href="/"
           className={cn("flex items-baseline gap-2", focusRingDark)}
         >
-          <span className="text-[17px] font-semibold tracking-tight">纬图</span>
-          <span className="text-xs tracking-[0.16em] text-white/60">WEITU</span>
+          <span className="text-[17px] font-semibold tracking-tight">AI纵横</span>
+          <span className="text-xs tracking-[0.16em] text-white/60">AI ZONGHENG</span>
         </Link>
         <button
           ref={buttonRef}

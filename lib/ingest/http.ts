@@ -1,5 +1,5 @@
 const USER_AGENT =
-  "WeituBot/0.1 (+https://github.com/xaiotongqian/ai-industry-tracker)";
+  "AIZonghengBot/0.1 (+https://github.com/xaiotongqian/ai-industry-tracker)";
 
 export async function fetchText(
   url: string,

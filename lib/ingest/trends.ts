@@ -33,7 +33,7 @@ function demoTrendsSet(note: string): Loaded<TrendNote> {
   return {
     items: demoTrends,
     origin: "demo",
-    sourceName: "纬图示意趋势",
+    sourceName: "AI纵横示意趋势",
     sourceHref: EPOCH_PAGE,
     fetchedAt: SAMPLE_AS_OF,
     note,
