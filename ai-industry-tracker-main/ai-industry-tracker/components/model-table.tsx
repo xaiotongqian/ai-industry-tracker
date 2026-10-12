@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { models } from "@/data/models";
 import type { ModelRow } from "@/data/types";
 import { formatTokenPrice } from "@/lib/format";
 import { cn } from "@/lib/utils";
@@ -10,12 +9,18 @@ import { cn } from "@/lib/utils";
 type SortKey = "quality" | "speed" | "price";
 
 const columns: { key: SortKey; label: string; hint: string }[] = [
-  { key: "quality", label: "质量", hint: "0–100，越高越好" },
+  { key: "quality", label: "质量", hint: "越高越好" },
   { key: "speed", label: "速度", hint: "tok/s" },
   { key: "price", label: "价格", hint: "美元 / 百万 token" },
 ];
 
-export function ModelTable() {
+export function ModelTable({
+  models,
+  priceHint = "美元 / 百万 token",
+}: {
+  models: ModelRow[];
+  priceHint?: string;
+}) {
   const [key, setKey] = useState<SortKey>("quality");
   const [dir, setDir] = useState<"asc" | "desc">("desc");
 
@@ -35,7 +40,7 @@ export function ModelTable() {
       return dir === "asc" ? delta : -delta;
     });
     return copy;
-  }, [key, dir]);
+  }, [key, dir, models]);
 
   return (
     <div>
@@ -85,7 +90,7 @@ export function ModelTable() {
                         </span>
                       </span>
                       <span className="font-normal text-[10px] tracking-normal text-muted-foreground">
-                        {column.hint}
+                        {column.key === "price" ? priceHint : column.hint}
                       </span>
                     </button>
                   </th>
@@ -111,20 +116,26 @@ function ModelLine({ row }: { row: ModelRow }) {
         {row.name}
       </th>
       <td className="px-3 py-3">
-        <Link
-          href={`/companies/${row.companySlug}`}
-          className="underline-offset-4 hover:text-primary hover:underline"
-        >
-          {row.organization}
-        </Link>
+        {row.companySlug ? (
+          <Link
+            href={`/companies/${row.companySlug}`}
+            className="underline-offset-4 hover:text-primary hover:underline"
+          >
+            {row.organization}
+          </Link>
+        ) : (
+          row.organization
+        )}
       </td>
       <td className="px-3 py-3">
         <div className="flex items-center gap-2">
-          <span className="w-8 font-mono tabular-nums">{row.quality}</span>
+          <span className="w-10 font-mono tabular-nums">
+            {Number.isInteger(row.quality) ? row.quality : row.quality.toFixed(1)}
+          </span>
           <span className="h-1.5 w-24 bg-muted" aria-hidden>
             <span
               className="block h-full bg-primary"
-              style={{ width: `${row.quality}%` }}
+              style={{ width: `${Math.max(0, Math.min(100, row.quality))}%` }}
             />
           </span>
         </div>
