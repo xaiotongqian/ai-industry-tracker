@@ -17,7 +17,19 @@ export function SiteFooter() {
         <div>
           <p className="text-3xl font-semibold tracking-tight">AI纵横</p>
           <p className="mt-1 text-xs tracking-[0.16em] text-white/60">AI ZONGHENG</p>
-          <p className="mt-5 max-w-sm text-[15px] leading-7 text-white/60">
+          <p className="mt-5 text-sm text-white/70">
+            站点作者{" "}
+            <Link
+              href="/about"
+              className={cn(
+                "text-white underline-offset-4 hover:underline",
+                focusRingDark,
+              )}
+            >
+              刘永武
+            </Link>
+          </p>
+          <p className="mt-4 max-w-sm text-[15px] leading-7 text-white/60">
             模型、融资和产业地图放在同一张纸上。能读到的公开源直接进页面，读不到的格子仍标示意。
           </p>
           <nav aria-label="页脚栏目" className="mt-6">

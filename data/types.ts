@@ -1,12 +1,13 @@
 /** Fixture clock so relative times stay stable across builds. */
 export const SAMPLE_AS_OF = "2026-10-12T06:00:00.000Z";
 
-export type Cadence = "hourly" | "daily" | "weekly";
+export type Cadence = "hourly" | "daily" | "weekly" | "editorial";
 
 export const CADENCE_LABEL: Record<Cadence, string> = {
   hourly: "每小时更新",
   daily: "每日更新",
   weekly: "每周更新",
+  editorial: "编辑观点",
 };
 
 export type CategoryId =

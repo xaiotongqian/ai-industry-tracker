@@ -9,7 +9,9 @@ export const metadata: Metadata = {
     template: "%s · AI纵横",
   },
   description:
-    "人工智能技术与产业聚合：首页动态、模型基准、融资与产业地图。动态读公开 RSS，其余栏目在源不可用时保留示意数据。",
+    "人工智能技术与产业聚合：动态、模型基准、融资、产业地图，以及编辑撰写的洞察。站点作者刘永武。",
+  authors: [{ name: "刘永武", url: "/about" }],
+  creator: "刘永武",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
