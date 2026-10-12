@@ -1,4 +1,6 @@
 import type { DataOrigin } from "@/data/types";
+import { focusRing } from "@/lib/ui";
+import { cn } from "@/lib/utils";
 
 export function DataMark({
   origin,
@@ -16,7 +18,7 @@ export function DataMark({
       href={sourceHref}
       target="_blank"
       rel="noreferrer noopener"
-      className="underline-offset-2 hover:underline"
+      className={cn("text-link underline-offset-4 hover:underline", focusRing)}
     >
       {sourceName}
     </a>
@@ -25,14 +27,16 @@ export function DataMark({
   );
 
   return (
-    <div className={origin === "demo" ? "text-cinnabar" : "text-primary"}>
-      <p className="font-mono text-xs">
-        {origin === "demo" ? "示意数据 · Demo" : "实时"}
-        <span className="mx-1.5">·</span>
+    <div>
+      <p className="text-sm text-muted-foreground">
+        {origin === "demo" ? "示意数据" : "实时"}
+        <span className="mx-1.5" aria-hidden>
+          ·
+        </span>
         {source}
       </p>
       {note ? (
-        <p className="mt-1 text-xs leading-5 text-muted-foreground">{note}</p>
+        <p className="mt-2 text-sm leading-6 text-muted-foreground">{note}</p>
       ) : null}
     </div>
   );

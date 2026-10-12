@@ -1,19 +1,25 @@
 import Link from "next/link";
+import { PageFrame } from "@/components/page-frame";
+import { focusRing } from "@/lib/ui";
+import { cn } from "@/lib/utils";
 
 export default function CompanyNotFound() {
   return (
-    <div className="max-w-lg">
-      <p className="font-mono text-[11px] tracking-[0.18em] text-cinnabar">404</p>
-      <h1 className="mt-3 font-serif text-4xl">地图上没有这家机构</h1>
-      <p className="mt-3 text-sm leading-6 text-muted-foreground">
+    <PageFrame>
+      <p className="text-sm text-muted-foreground">404</p>
+      <h1 className="mt-4 text-5xl font-semibold tracking-tight">地图上没有这家机构</h1>
+      <p className="mt-4 max-w-md text-lg leading-relaxed text-muted-foreground">
         链接可能写错了，或者它还没放进占位样本。回到产业地图可以从分类里再找。
       </p>
       <Link
         href="/landscape"
-        className="mt-6 inline-block bg-primary px-3 py-2 text-sm text-primary-foreground focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
+        className={cn(
+          "mt-8 inline-flex min-h-11 items-center rounded-full bg-foreground px-5 text-sm text-background motion-safe:transition-opacity motion-safe:duration-200 hover:opacity-80",
+          focusRing,
+        )}
       >
         返回产业地图
       </Link>
-    </div>
+    </PageFrame>
   );
 }

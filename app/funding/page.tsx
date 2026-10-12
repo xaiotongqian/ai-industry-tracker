@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { DataMark } from "@/components/data-mark";
 import { FundingLedger } from "@/components/funding-ledger";
+import { PageFrame } from "@/components/page-frame";
 import { PageIntro } from "@/components/page-intro";
 import { loadCompanies } from "@/lib/ingest/companies";
 import { loadFunding } from "@/lib/ingest/funding";
@@ -13,7 +14,7 @@ export const metadata: Metadata = {
 export default async function FundingPage() {
   const [funding, companies] = await Promise.all([loadFunding(), loadCompanies()]);
   return (
-    <>
+    <PageFrame>
       <PageIntro
         section="funding"
         title="融资"
@@ -33,6 +34,6 @@ export default async function FundingPage() {
         companies={companies.items}
         origin={funding.origin}
       />
-    </>
+    </PageFrame>
   );
 }

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { DataMark } from "@/components/data-mark";
 import { LandscapeBoard } from "@/components/landscape-board";
+import { PageFrame } from "@/components/page-frame";
 import { PageIntro } from "@/components/page-intro";
 import { loadCompanies } from "@/lib/ingest/companies";
 
@@ -12,12 +13,12 @@ export const metadata: Metadata = {
 export default async function LandscapePage() {
   const companies = await loadCompanies();
   return (
-    <>
+    <PageFrame>
       <PageIntro
         section="landscape"
         title="产业地图"
         cadence="weekly"
-        lede={`每周更新。版式按矩阵分栏：基础模型、基础设施、智能体、垂直应用、数据与评测、芯片与算力。当前 ${companies.items.length} 家，可筛选、可搜索。`}
+        lede={`每周更新。按基础模型、基础设施、智能体、垂直应用、数据与评测、芯片与算力分栏。当前 ${companies.items.length} 家，可筛选、可搜索。`}
         mark={
           <DataMark
             origin={companies.origin}
@@ -28,6 +29,6 @@ export default async function LandscapePage() {
         }
       />
       <LandscapeBoard companies={companies.items} origin={companies.origin} />
-    </>
+    </PageFrame>
   );
 }

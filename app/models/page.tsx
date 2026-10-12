@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { DataMark } from "@/components/data-mark";
 import { ModelTable } from "@/components/model-table";
+import { PageFrame } from "@/components/page-frame";
 import { PageIntro } from "@/components/page-intro";
 import { loadModels } from "@/lib/ingest/models";
 
@@ -12,7 +13,7 @@ export const metadata: Metadata = {
 export default async function ModelsPage() {
   const models = await loadModels();
   return (
-    <>
+    <PageFrame>
       <PageIntro
         section="models"
         title="模型基准"
@@ -33,6 +34,6 @@ export default async function ModelsPage() {
           models.origin === "live" ? "输入美元 / 百万 token" : "美元 / 百万 token"
         }
       />
-    </>
+    </PageFrame>
   );
 }

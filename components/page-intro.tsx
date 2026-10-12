@@ -1,7 +1,6 @@
 import { Breadcrumbs } from "@/components/breadcrumbs";
-import { CadenceBadge } from "@/components/cadence-badge";
 import { SectionIndex } from "@/components/section-index";
-import type { Cadence } from "@/data/types";
+import { CADENCE_LABEL, type Cadence } from "@/data/types";
 import type { SectionId } from "@/lib/sections";
 
 export function PageIntro({
@@ -18,23 +17,23 @@ export function PageIntro({
   mark?: React.ReactNode;
 }) {
   return (
-    <header className="mb-8 border-b border-border pb-8">
-      <div className="flex flex-wrap items-center justify-between gap-3">
+    <header className="mb-16 sm:mb-20">
+      <div className="flex flex-wrap items-baseline justify-between gap-3">
         <Breadcrumbs
           items={[
             { href: "/", label: "动态" },
             { label: title },
           ]}
         />
-        <CadenceBadge cadence={cadence} />
+        <p className="text-sm text-muted-foreground">{CADENCE_LABEL[cadence]}</p>
       </div>
-      <h1 className="mt-3 font-serif text-4xl tracking-tight text-balance sm:text-5xl">
+      <h1 className="mt-12 text-5xl font-semibold tracking-tight text-balance sm:text-6xl sm:leading-[1.05]">
         {title}
       </h1>
-      <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7">
+      <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground sm:text-xl">
         {lede}
       </p>
-      {mark ? <div className="mt-4 max-w-2xl">{mark}</div> : null}
+      {mark ? <div className="mt-6 max-w-2xl">{mark}</div> : null}
       <SectionIndex current={section} />
     </header>
   );

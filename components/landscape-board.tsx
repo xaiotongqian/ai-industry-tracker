@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { Button } from "@/components/ui/button";
 import { Money } from "@/components/money";
 import { categories } from "@/data/categories";
 import type { CategoryId, Company, DataOrigin } from "@/data/types";
+import { focusRing, hoverFade } from "@/lib/ui";
+import { cn } from "@/lib/utils";
 
 type Filter = CategoryId | "all";
 
@@ -34,14 +35,14 @@ export function LandscapeBoard({
 
   return (
     <div>
-      <div className="mb-6 flex flex-col gap-4">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+      <div className="mb-14 flex flex-col gap-8">
+        <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
           <form
             role="search"
-            className="w-full sm:max-w-xs"
+            className="w-full max-w-md"
             onSubmit={(event) => event.preventDefault()}
           >
-            <label htmlFor="org-search" className="text-xs text-muted-foreground">
+            <label htmlFor="org-search" className="text-sm text-muted-foreground">
               搜索机构
             </label>
             <input
@@ -51,19 +52,20 @@ export function LandscapeBoard({
               onChange={(event) => setQuery(event.target.value)}
               placeholder="名称、城市或一句话"
               autoComplete="off"
-              className="mt-1 h-9 w-full border border-input bg-card px-3 text-sm outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+              className={cn(
+                "mt-2 h-12 w-full rounded-xl bg-white px-4 text-base outline-none ring-1 ring-black/10 placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-foreground/25",
+              )}
             />
           </form>
-          <p className="font-mono text-xs text-muted-foreground">
+          <p className="text-sm text-muted-foreground">
             显示 {filtered.length} / {companies.length}
-            {origin === "demo" ? (
-              <span className="ml-2 text-cinnabar">样本 · 目标 200+ · Demo</span>
-            ) : (
-              <span className="ml-2">公开名单</span>
-            )}
+            <span className="mx-2" aria-hidden>
+              ·
+            </span>
+            {origin === "demo" ? "样本 · 目标 200+ · 示意" : "公开名单"}
           </p>
         </div>
-        <div className="flex flex-wrap gap-1" role="group" aria-label="机构类别">
+        <div className="flex flex-wrap gap-x-1 gap-y-2" role="group" aria-label="机构类别">
           <FilterButton
             active={category === "all"}
             onClick={() => setCategory("all")}
@@ -86,41 +88,42 @@ export function LandscapeBoard({
       </div>
 
       {filtered.length === 0 ? (
-        <div className="border border-dashed border-border bg-card/70 px-4 py-10 text-center">
-          <p className="font-serif text-2xl">没有匹配的机构</p>
-          <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-muted-foreground">
+        <div className="py-16">
+          <p className="text-3xl font-semibold tracking-tight">没有匹配的机构</p>
+          <p className="mt-3 max-w-md text-base leading-7 text-muted-foreground">
             试试别的类别，或清空搜索。完整地图接上之后，这里仍用同一套筛选。
           </p>
-          <Button
+          <button
             type="button"
-            variant="outline"
-            className="mt-4"
+            className={cn(
+              "mt-8 inline-flex min-h-11 items-center rounded-full bg-foreground px-5 text-sm text-background motion-safe:transition-opacity motion-safe:duration-200 hover:opacity-80",
+              focusRing,
+            )}
             onClick={() => {
               setCategory("all");
               setQuery("");
             }}
           >
             清空条件
-          </Button>
+          </button>
         </div>
       ) : grouped ? (
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+        <div className="space-y-16">
           {categories.map((item) => {
             const rows = filtered.filter((company) => company.category === item.id);
+            if (rows.length === 0) return null;
             return (
-              <section key={item.id} className="border border-border bg-card">
-                <header className="border-b border-border px-4 py-3">
-                  <div className="flex items-baseline justify-between gap-3">
-                    <h2 className="font-serif text-xl">{item.label}</h2>
-                    <span className="font-mono text-[11px] tracking-[0.14em] text-muted-foreground">
-                      {item.en} · {rows.length}
-                    </span>
-                  </div>
-                  <p className="mt-1 text-xs leading-5 text-muted-foreground">
-                    {item.blurb}
+              <section key={item.id} className="border-t border-border pt-10">
+                <header className="mb-2 flex flex-wrap items-baseline justify-between gap-3">
+                  <h2 className="text-3xl font-semibold tracking-tight">{item.label}</h2>
+                  <p className="text-sm text-muted-foreground">
+                    {item.en} · {rows.length}
                   </p>
                 </header>
-                <ul className="divide-y divide-border">
+                <p className="mb-6 max-w-xl text-sm leading-6 text-muted-foreground">
+                  {item.blurb}
+                </p>
+                <ul className="grid md:grid-cols-2 md:gap-x-16">
                   {rows.map((company) => (
                     <li key={company.slug}>
                       <CompanyRow company={company} />
@@ -132,10 +135,10 @@ export function LandscapeBoard({
           })}
         </div>
       ) : (
-        <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+        <ul className="border-t border-border">
           {filtered.map((company) => (
             <li key={company.slug}>
-              <CompanyCard company={company} />
+              <CompanyRow company={company} showCategory />
             </li>
           ))}
         </ul>
@@ -154,61 +157,48 @@ function FilterButton({
   onClick: () => void;
 }) {
   return (
-    <Button
+    <button
       type="button"
-      size="sm"
-      variant={active ? "default" : "outline"}
       aria-pressed={active}
       onClick={onClick}
+      className={cn(
+        "inline-flex min-h-11 items-center rounded-full px-4 text-sm motion-safe:transition-colors motion-safe:duration-200",
+        focusRing,
+        active ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground",
+      )}
     >
       {label}
-    </Button>
+    </button>
   );
 }
 
-function CompanyRow({ company }: { company: Company }) {
-  return (
-    <Link
-      href={`/companies/${company.slug}`}
-      className="block px-4 py-3 transition-colors hover:bg-muted/70"
-    >
-      <span className="flex items-baseline justify-between gap-3">
-        <span className="font-serif text-lg leading-tight">{company.name}</span>
-        <span className="shrink-0 text-xs">
-          <Money value={company.valuation} />
-        </span>
-      </span>
-      {company.name !== company.nameEn ? (
-        <span className="mt-0.5 block font-mono text-[11px] text-muted-foreground">
-          {company.nameEn}
-        </span>
-      ) : null}
-      <span className="mt-1 line-clamp-1 text-sm text-muted-foreground">
-        {company.blurb}
-      </span>
-    </Link>
-  );
-}
-
-function CompanyCard({ company }: { company: Company }) {
+function CompanyRow({
+  company,
+  showCategory = false,
+}: {
+  company: Company;
+  showCategory?: boolean;
+}) {
   const category = categories.find((item) => item.id === company.category);
   return (
     <Link
       href={`/companies/${company.slug}`}
-      className="flex h-full flex-col border border-border bg-card p-4 transition-colors hover:border-primary/50"
+      className={cn(
+        "grid gap-1 border-b border-border py-5 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-baseline sm:gap-x-8",
+        focusRing,
+        hoverFade,
+      )}
     >
-      <span className="font-mono text-[11px] tracking-[0.14em] text-primary">
-        {category?.label}
+      <span className="min-w-0">
+        <span className="block text-lg font-medium tracking-tight">{company.name}</span>
+        <span className="mt-1 block truncate text-sm text-muted-foreground">
+          {showCategory && category ? `${category.label} · ` : ""}
+          {company.name !== company.nameEn ? `${company.nameEn} · ` : ""}
+          {company.blurb}
+        </span>
       </span>
-      <span className="mt-2 font-serif text-2xl leading-tight">{company.name}</span>
-      {company.name !== company.nameEn ? (
-        <span className="mt-1 text-sm text-muted-foreground">{company.nameEn}</span>
-      ) : null}
-      <span className="mt-3 text-sm leading-6 text-muted-foreground">
-        {company.blurb}
-      </span>
-      <span className="mt-4 text-sm">
-        估值 <Money value={company.valuation} />
+      <span className="text-sm text-muted-foreground sm:text-right">
+        <Money value={company.valuation} />
       </span>
     </Link>
   );
