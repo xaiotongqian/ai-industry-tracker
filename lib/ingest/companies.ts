@@ -154,7 +154,7 @@ async function loadCompaniesUncached(): Promise<Loaded<Company>> {
       ? `FutureX 新写入 ${futurexAdded} 家，并更新了 ${futurexUpdated} 家已有机构的公开估值。`
       : "FutureX 这一轮没拿到，已有机构的估值仍是示意。",
     ycAdded > 0
-      ? `YC 公开名单补了 ${ycAdded} 家，分类是纬图归的，融资和估值未接入。`
+      ? `YC 公开名单补了 ${ycAdded} 家，分类是AI纵横归的，融资和估值未接入。`
       : merged.length < TARGET
         ? `还没有补到 ${TARGET} 家。`
         : "没有再用 YC 补位。",
@@ -177,7 +177,7 @@ function demoCompanies(note: string): Loaded<Company> {
   return {
     items: editorial.map((company) => ({ ...company })),
     origin: "demo",
-    sourceName: "纬图示意样本",
+    sourceName: "AI纵横示意样本",
     fetchedAt: SAMPLE_AS_OF,
     note,
   };
@@ -240,7 +240,7 @@ function applyFuturex(
     domain: hostname(website) || "未标注",
     website: website ?? undefined,
     profileNote:
-      "来自 FutureX Capital 公开数据集（CC BY 4.0）。赛道映射到纬图的六类，累计融资没有公开总额。",
+      "来自 FutureX Capital 公开数据集（CC BY 4.0）。赛道映射到AI纵横的六类，累计融资没有公开总额。",
     funding: { status: "undisclosed" },
     valuation: money,
   };
@@ -279,7 +279,7 @@ function addYc(
     listing: row.status === "Public" ? "public" : "private",
     domain: hostname(website) || "未标注",
     website: website ?? undefined,
-    profileNote: "来自 YC 公开公司名单。分类是纬图按标签归的，融资和估值没有接入。",
+    profileNote: "来自 YC 公开公司名单。分类是AI纵横按标签归的，融资和估值没有接入。",
     funding: { status: "undisclosed" },
     valuation: { status: "undisclosed" },
   };

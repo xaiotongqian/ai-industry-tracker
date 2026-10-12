@@ -5,8 +5,8 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "纬图",
-    template: "%s · 纬图",
+    default: "AI纵横",
+    template: "%s · AI纵横",
   },
   description:
     "人工智能技术与产业聚合：首页动态、模型基准、融资与产业地图。动态读公开 RSS，其余栏目在源不可用时保留示意数据。",

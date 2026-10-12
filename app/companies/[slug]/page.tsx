@@ -243,7 +243,7 @@ function valuationNote(status: "mock" | "reported" | "undisclosed" | "pending"):
     case "mock":
       return "示意数字不是报价。";
     case "reported":
-      return "取自 FutureX Capital 公开数据集里的报道口径，不是纬图测算。";
+      return "取自 FutureX Capital 公开数据集里的报道口径，不是AI纵横测算。";
     case "pending":
       return "公开报道没有换成美元，原文写在数字旁边。";
     case "undisclosed":

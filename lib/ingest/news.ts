@@ -82,7 +82,7 @@ function demoNewsSet(note: string): Loaded<NewsItem> {
   return {
     items: demoNews,
     origin: "demo",
-    sourceName: "纬图示意稿",
+    sourceName: "AI纵横示意稿",
     fetchedAt: SAMPLE_AS_OF,
     note,
   };

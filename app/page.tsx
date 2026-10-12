@@ -10,7 +10,7 @@ import { focusRingDark, frameClass } from "@/lib/ui";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
-  title: { absolute: "纬图 · 人工智能产业索引" },
+  title: { absolute: "AI纵横 · 人工智能产业索引" },
   description:
     "动态、模型基准、融资与产业地图。公开源按栏目更新，读不到的标示意。",
 };
@@ -28,7 +28,7 @@ export default async function HomePage() {
     <>
       <section className="-mt-12 bg-black pt-28 pb-20 text-white sm:pt-36 sm:pb-28">
         <div className={frameClass}>
-          <p className="text-[13px] tracking-[0.18em] text-white/60">WEITU · 纬图</p>
+          <p className="text-[13px] tracking-[0.18em] text-white/60">AI纵横</p>
           <h1 className="mt-5 max-w-4xl text-[2.75rem] leading-[1.12] font-semibold tracking-tight text-balance sm:text-6xl lg:text-7xl">
             人工智能产业索引。
           </h1>
