@@ -53,7 +53,7 @@ export function ModelTable({
             模型基准占位表，含质量、速度和价格
           </caption>
           <thead>
-            <tr className="border-b border-border bg-muted/60">
+            <tr className="border-b border-border text-muted-foreground">
               <th scope="col" className="px-3 py-3 font-medium">
                 模型
               </th>
@@ -112,10 +112,10 @@ export function ModelTable({
 function ModelLine({ row }: { row: ModelRow }) {
   return (
     <tr className="border-b border-border last:border-b-0">
-      <th scope="row" className="px-3 py-3 font-serif text-base font-medium">
+      <th scope="row" className="px-3 py-3 font-serif text-lg font-medium">
         {row.name}
       </th>
-      <td className="px-3 py-3">
+      <td className="px-3 py-3 text-muted-foreground">
         {row.companySlug ? (
           <Link
             href={`/companies/${row.companySlug}`}

@@ -25,39 +25,39 @@ export function FundingLedger({
         {origin === "demo" ? "示意金额合计" : "已披露美元合计"} {formatUsd(total)}
         {hidden > 0 ? ` · ${hidden} 笔未计入（未披露或未换算）` : null}
       </p>
-      <ol className="divide-y border border-border bg-card">
+      <ol className="border-t border-border">
         {rounds.map((round) => {
           const company = round.companySlug ? bySlug.get(round.companySlug) : undefined;
           const name = company?.name ?? round.companyName ?? "未知机构";
+          const investors =
+            round.investors.length > 0 ? round.investors.join("、") : "未披露";
           return (
-            <li
-              key={round.id}
-              className="grid gap-2 px-4 py-4 sm:grid-cols-[9.5rem_minmax(0,1fr)_auto] sm:items-start sm:gap-4"
-            >
-              <time
-                dateTime={round.announcedOn}
-                className="font-mono text-xs text-muted-foreground"
-              >
-                {formatDate(round.announcedOn)}
-              </time>
-              <div>
-                <h2 className="font-serif text-xl leading-snug">
+            <li key={round.id} className="border-b border-border py-3">
+              <p className="font-mono text-[11px] text-muted-foreground">
+                <time dateTime={round.announcedOn}>{formatDate(round.announcedOn)}</time>
+                <span aria-hidden> · </span>
+                {round.round}
+                {company && company.name !== company.nameEn ? ` · ${company.nameEn}` : ""}
+              </p>
+              <div className="mt-1 flex items-baseline justify-between gap-4">
+                <h2 className="min-w-0 font-serif text-xl leading-snug">
                   {company ? (
-                    <Link href={`/companies/${company.slug}`} className="hover:text-primary">
+                    <Link
+                      href={`/companies/${company.slug}`}
+                      className="hover:text-primary focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
+                    >
                       {name}
                     </Link>
                   ) : (
                     name
                   )}
                 </h2>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  {round.round}
-                  {company && company.name !== company.nameEn ? ` · ${company.nameEn}` : ""}
+                <p className="shrink-0 font-mono text-lg">
+                  <Money value={round.amount} />
                 </p>
-                <p className="mt-1 text-sm leading-6">
-                  {`${origin === "demo" ? "投资人（示意）" : "投资人"}：${
-                    round.investors.length > 0 ? round.investors.join("、") : "未披露"
-                  }`}
+              </div>
+              <p className="mt-1 line-clamp-1 text-sm text-muted-foreground">
+                  {origin === "demo" ? "投资人（示意）" : "投资人"}：{investors}
                   {round.sourceUrl ? (
                     <>
                       {" · "}
@@ -65,16 +65,12 @@ export function FundingLedger({
                         href={round.sourceUrl}
                         target="_blank"
                         rel="noreferrer noopener"
-                        className="text-primary hover:underline"
+                        className="text-primary hover:underline focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
                       >
                         来源
                       </a>
                     </>
                   ) : null}
-                </p>
-              </div>
-              <p className="font-mono text-lg sm:text-right">
-                <Money value={round.amount} />
               </p>
             </li>
           );

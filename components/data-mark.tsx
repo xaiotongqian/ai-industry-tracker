@@ -32,7 +32,7 @@ export function DataMark({
         {source}
       </p>
       {note ? (
-        <p className="mt-1 text-sm leading-6 text-muted-foreground">{note}</p>
+        <p className="mt-1 text-xs leading-5 text-muted-foreground">{note}</p>
       ) : null}
     </div>
   );

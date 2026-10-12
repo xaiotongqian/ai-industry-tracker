@@ -61,7 +61,7 @@ export default async function CompanyPage({
         ]}
       />
 
-      <header className="border-b border-foreground/80 pb-6">
+      <header className="border-b border-border pb-8">
         <p className="font-mono text-[11px] tracking-[0.18em] text-primary">
           {category.label} · {category.en}
         </p>
