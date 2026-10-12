@@ -18,7 +18,7 @@ export function PageIntro({
   mark?: React.ReactNode;
 }) {
   return (
-    <header className="mb-8 border-b border-foreground/80 pb-6">
+    <header className="mb-8 border-b border-border pb-8">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <Breadcrumbs
           items={[

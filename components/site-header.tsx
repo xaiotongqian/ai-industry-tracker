@@ -76,12 +76,9 @@ function SiteHeaderFrame({ pathname }: { pathname: string }) {
       }}
     >
       <div className="h-1 bg-primary" />
-      <div className="border-b border-border">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-1.5 font-mono text-[11px] text-muted-foreground sm:px-6">
-          <p>公开源按栏目接入 · 示意数据会标 Demo</p>
-          <p className="shrink-0">失败时回退示意</p>
-        </div>
-      </div>
+      <p className="mx-auto max-w-6xl px-4 pt-1.5 font-mono text-[11px] text-muted-foreground sm:px-6">
+        公开源接入 · 示意标 Demo
+      </p>
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
         <Link
           href="/"

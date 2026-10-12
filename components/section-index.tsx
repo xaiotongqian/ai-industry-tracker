@@ -7,7 +7,7 @@ const focusRing =
 
 export function SectionIndex({ current }: { current: SectionId | "company" }) {
   return (
-    <nav aria-label="栏目索引" className="mt-6 border-t border-border pt-3">
+    <nav aria-label="栏目索引" className="mt-5">
       <ol className="flex flex-wrap gap-x-4 gap-y-2">
         {sections.map((section) => {
           const onPage = section.id === current;

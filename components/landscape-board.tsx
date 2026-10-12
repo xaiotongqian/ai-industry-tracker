@@ -183,7 +183,7 @@ function CompanyRow({ company }: { company: Company }) {
           {company.nameEn}
         </span>
       ) : null}
-      <span className="mt-1 block text-sm leading-6 text-muted-foreground">
+      <span className="mt-1 line-clamp-1 text-sm text-muted-foreground">
         {company.blurb}
       </span>
     </Link>

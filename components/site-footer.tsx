@@ -5,7 +5,7 @@ import { sections } from "@/lib/sections";
 
 export function SiteFooter() {
   return (
-    <footer className="mt-auto border-t border-foreground/80">
+    <footer className="mt-auto border-t border-border">
       <div className="mx-auto grid max-w-6xl gap-8 px-4 py-10 sm:px-6 md:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)]">
         <div>
           <p className="font-serif text-2xl">纬图</p>
