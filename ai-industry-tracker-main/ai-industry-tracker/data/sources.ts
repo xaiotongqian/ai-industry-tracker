@@ -1,8 +1,8 @@
 import type { DataSource } from "@/data/types";
 
 /**
- * Planned inputs. Nothing here is fetched.
- * Keep this list aligned with the README section "数据源以后怎么接".
+ * Source slots. Live fetchers live in lib/ingest. `connected` describes the
+ * pipeline, not whether the latest request succeeded — pages show that.
  */
 export const sources: DataSource[] = [
   {
@@ -11,9 +11,11 @@ export const sources: DataSource[] = [
     covers: "技术与算力趋势",
     cadence: "weekly",
     usedOn: "首页侧栏",
-    module: "data/trends.ts",
+    module: "lib/ingest/trends.ts",
     plugIn:
-      "把 Epoch 的公开趋势笔记整理成 TrendNote 数组，替换 data/trends.ts。首页侧栏只读这个模块，不直接请求 Epoch。",
+      "读取 https://epoch.ai/data/notable_ai_models.csv ，只把条数、最近模型和训练算力估计写成 TrendNote。失败时回退 data/trends.ts。",
+    connected: true,
+    state: "已接入 · 公开 CSV",
   },
   {
     id: "artificial-analysis",
@@ -21,9 +23,11 @@ export const sources: DataSource[] = [
     covers: "模型质量、速度、价格",
     cadence: "weekly",
     usedOn: "模型",
-    module: "data/models.ts",
+    module: "lib/ingest/models.ts",
     plugIn:
-      "把基准结果映射为 ModelRow（name、organization、quality、speed、price）。质量用 0–100 的指数，速度用 tok/s，价格用美元 / 百万 token。每周替换 data/models.ts。",
+      "设置 ARTIFICIAL_ANALYSIS_API_KEY 后请求 /api/v2/language/models/free。没有钥匙时不发请求，回退 data/models.ts。",
+    connected: false,
+    state: "示意回退 · 需要 API key",
   },
   {
     id: "the-500",
@@ -31,9 +35,11 @@ export const sources: DataSource[] = [
     covers: "多源 AI 新闻",
     cadence: "hourly",
     usedOn: "首页动态、机构页相关动态",
-    module: "data/news.ts",
+    module: "lib/ingest/news.ts",
     plugIn:
-      "把 500+ 来源的条目整理成 NewsItem，并尽量填上 companySlug，机构页才能串起相关动态。标题、摘要、时间和原文链接替换 data/news.ts，按小时刷新。",
+      "the500feed.com 没有公开 RSS 或 JSON。首页改为聚合 TechCrunch、The Verge、MIT Technology Review、OpenAI、Google AI、Hugging Face 的公开订阅，失败时回退 data/news.ts。",
+    connected: false,
+    state: "无公开订阅 · 首页用其他 RSS",
   },
   {
     id: "funding-tracker",
@@ -41,18 +47,22 @@ export const sources: DataSource[] = [
     covers: "融资轮次",
     cadence: "daily",
     usedOn: "融资、机构页",
-    module: "data/funding.ts",
+    module: "lib/ingest/funding.ts",
     plugIn:
-      "把每日轮次映射为 FundingRound。金额未知时用 status: undisclosed，不要填猜测数字。投资人用源里的原名。替换 data/funding.ts。",
+      "先试 aifunding.me 的公开接口；不通则用 Data Cube 融资页链出的 /api/deals。金额只在美元时计入。失败时回退 data/funding.ts。",
+    connected: true,
+    state: "已接入 · 公开 JSON",
   },
   {
     id: "futurex",
     name: "FutureX",
-    covers: "约 120 家公司的估值与并购",
+    covers: "公司名单与公开估值",
     cadence: "weekly",
     usedOn: "产业地图、机构档案",
-    module: "data/companies.ts",
+    module: "lib/ingest/companies.ts",
     plugIn:
-      "用 FutureX 的估值、融资和并购状态填 Company.funding / Company.valuation。分类（基础模型、基础设施、智能体、垂直应用等）仍可手写维护。地图样本从约 40 家扩到 200+ 时，沿用同一 Company 形状和 /companies/[slug]。",
+      "读取 futurex.capital/api/public/ai-companies，和编辑样本合并。不足 200 家时用 YC 公开公司名单补位。失败时只留 data/companies.ts。",
+    connected: true,
+    state: "已接入 · 公开 JSON",
   },
 ];

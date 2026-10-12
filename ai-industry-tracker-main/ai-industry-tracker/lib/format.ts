@@ -4,6 +4,11 @@ import { SAMPLE_AS_OF } from "@/data/types";
 export function formatUsd(amount: number): string {
   const abs = Math.abs(amount);
   const sign = amount < 0 ? "-" : "";
+  if (abs >= 1_000_000_000_000) {
+    const value = abs / 1_000_000_000_000;
+    const digits = Number.isInteger(value) ? 0 : 1;
+    return `${sign}$${value.toFixed(digits)}T`;
+  }
   if (abs >= 1_000_000_000) {
     const value = abs / 1_000_000_000;
     const digits = Number.isInteger(value) ? 0 : 1;
@@ -27,13 +32,25 @@ export function formatDate(isoDate: string): string {
   return `${year}年${Number(month)}月${Number(day)}日`;
 }
 
-export function relativeLabel(iso: string): string {
-  const deltaMs = Date.parse(SAMPLE_AS_OF) - Date.parse(iso);
+export function relativeLabel(iso: string, asOf: string = SAMPLE_AS_OF): string {
+  const deltaMs = Date.parse(asOf) - Date.parse(iso);
+  if (Number.isNaN(deltaMs)) return formatDate(iso);
+  if (deltaMs < 0) return formatDate(iso);
   const hours = Math.floor(deltaMs / 3_600_000);
   if (hours < 1) return "不到 1 小时";
   if (hours < 24) return `${hours} 小时前`;
   const days = Math.floor(hours / 24);
   return `${days} 天前`;
+}
+
+/** Scientific notation for Epoch FLOP estimates. */
+export function formatFlop(value: number): string {
+  if (!Number.isFinite(value) || value <= 0) return "未知";
+  const exp = Math.floor(Math.log10(value));
+  const sig = value / 10 ** exp;
+  const rounded = Number(sig.toFixed(1));
+  const digits = Number.isInteger(rounded) ? 0 : 1;
+  return `${rounded.toFixed(digits)}×10^${exp}`;
 }
 
 export function listingLabel(listing: Listing): string {
@@ -48,5 +65,5 @@ export function listingLabel(listing: Listing): string {
 }
 
 export function moneySortValue(value: MoneyPlaceholder): number | null {
-  return value.status === "mock" ? value.usd : null;
+  return value.status === "mock" || value.status === "reported" ? value.usd : null;
 }

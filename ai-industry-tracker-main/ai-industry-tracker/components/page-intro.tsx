@@ -6,11 +6,13 @@ export function PageIntro({
   title,
   cadence,
   lede,
+  mark,
 }: {
   index: string;
   title: string;
   cadence: Cadence;
   lede: string;
+  mark?: React.ReactNode;
 }) {
   return (
     <header className="mb-8 border-b border-foreground/80 pb-6">
@@ -26,6 +28,7 @@ export function PageIntro({
       <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7">
         {lede}
       </p>
+      {mark ? <div className="mt-4 max-w-2xl">{mark}</div> : null}
     </header>
   );
 }

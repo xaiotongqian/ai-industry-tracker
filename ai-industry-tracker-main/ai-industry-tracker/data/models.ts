@@ -117,7 +117,7 @@ export const models: ModelRow[] = [
 ];
 
 for (const row of models) {
-  requireCompany(row.companySlug);
+  if (row.companySlug) requireCompany(row.companySlug);
 }
 
 export function modelsForCompany(slug: string): ModelRow[] {

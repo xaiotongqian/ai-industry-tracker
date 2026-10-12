@@ -19,9 +19,13 @@ export type CategoryId =
 
 export type Listing = "private" | "public" | "subsidiary";
 
-/** Money fields are fixtures. `mock` must render with a 示意 mark. */
+/**
+ * `mock` is a fixture and must render with a 示意 mark.
+ * `reported` is a USD figure copied from a public source, with no conversion.
+ */
 export type MoneyPlaceholder =
   | { status: "mock"; usd: number }
+  | { status: "reported"; usd: number }
   | { status: "undisclosed" }
   | { status: "pending"; reason: string };
 
@@ -31,11 +35,15 @@ export type Company = {
   nameEn: string;
   category: CategoryId;
   blurb: string;
-  founded: number;
+  founded: number | null;
   hq: string;
   listing: Listing;
   /** Display only. Do not treat as a verified URL. */
   domain: string;
+  /** Set only when a public source gave an http(s) URL. */
+  website?: string;
+  /** Why this profile is thin: seeded from a public list, not the editorial set. */
+  profileNote?: string;
   funding: MoneyPlaceholder;
   valuation: MoneyPlaceholder;
 };
@@ -48,34 +56,43 @@ export type NewsItem = {
   wire: string;
   desk: string;
   publishedAt: string;
-  companySlug: string;
+  /** Null when the headline does not name an organization on the map. */
+  companySlug: string | null;
+  /** Original article. Present on live items. */
+  href?: string;
 };
 
 export type ModelRow = {
   id: string;
   name: string;
   organization: string;
-  companySlug: string;
-  /** 0–100 illustrative index, not a published benchmark. */
+  /** Null when the lab is not on the map yet. */
+  companySlug: string | null;
+  /** 0–100 index. Demo rows are fixtures; live rows use the source index as published. */
   quality: number;
-  /** Illustrative tokens per second. */
+  /** Tokens per second. */
   speed: number;
-  /** Illustrative USD per million tokens. */
+  /** USD per million tokens. */
   price: number;
 };
 
 export type FundingRound = {
   id: string;
-  companySlug: string;
+  companySlug: string | null;
+  /** Spelling from the source. The ledger falls back to the map name. */
+  companyName?: string;
   round: string;
   amount: MoneyPlaceholder;
   announcedOn: string;
   investors: string[];
+  sourceUrl?: string;
+  sourceName?: string;
 };
 
 export type TrendNote = {
   id: string;
   text: string;
+  href?: string;
 };
 
 export type DataSource = {
@@ -86,4 +103,19 @@ export type DataSource = {
   usedOn: string;
   module: string;
   plugIn: string;
+  /** False when this slot still renders fixtures. */
+  connected: boolean;
+  /** Short status for the footer. Page banners use the live fetch result. */
+  state: string;
+};
+
+export type DataOrigin = "live" | "demo";
+
+export type Loaded<T> = {
+  items: T[];
+  origin: DataOrigin;
+  sourceName: string;
+  sourceHref?: string;
+  fetchedAt: string;
+  note: string;
 };
