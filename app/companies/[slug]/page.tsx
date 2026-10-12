@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Breadcrumbs } from "@/components/breadcrumbs";
 import { EmptyNote } from "@/components/empty-note";
 import { Money } from "@/components/money";
+import { SectionIndex } from "@/components/section-index";
 import { getCategory } from "@/data/categories";
 import { loadCompanies } from "@/lib/ingest/companies";
 import { loadFunding } from "@/lib/ingest/funding";
@@ -50,23 +52,14 @@ export default async function CompanyPage({
 
   return (
     <article>
-      <nav aria-label="面包屑" className="mb-6">
-        <ol className="flex flex-wrap items-center gap-2 font-mono text-xs text-muted-foreground">
-          <li>
-            <Link href="/" className="hover:text-primary">
-              首页动态
-            </Link>
-          </li>
-          <li aria-hidden="true">/</li>
-          <li>
-            <Link href="/landscape" className="hover:text-primary">
-              产业地图
-            </Link>
-          </li>
-          <li aria-hidden="true">/</li>
-          <li className="text-foreground">{company.name}</li>
-        </ol>
-      </nav>
+      <Breadcrumbs
+        className="mb-6"
+        items={[
+          { href: "/", label: "动态" },
+          { href: "/landscape", label: "产业地图" },
+          { label: company.name },
+        ]}
+      />
 
       <header className="border-b border-foreground/80 pb-6">
         <p className="font-mono text-[11px] tracking-[0.18em] text-primary">
@@ -84,6 +77,7 @@ export default async function CompanyPage({
             {company.profileNote}
           </p>
         ) : null}
+        <SectionIndex current="company" />
       </header>
 
       <dl className="mt-6 grid grid-cols-2 gap-px border border-border bg-border lg:grid-cols-4">
@@ -189,8 +183,11 @@ export default async function CompanyPage({
       <section className="mt-10">
         <div className="mb-3 flex items-baseline justify-between gap-3">
           <h2 className="font-serif text-2xl">相关动态</h2>
-          <Link href="/" className="text-sm text-primary hover:underline">
-            回到首页动态
+          <Link
+            href="/"
+            className="text-sm text-primary hover:underline focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
+          >
+            回到动态
           </Link>
         </div>
         {relatedNews.length === 0 ? (

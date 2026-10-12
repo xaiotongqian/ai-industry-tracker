@@ -1,5 +1,7 @@
+import Link from "next/link";
 import { CADENCE_LABEL } from "@/data/types";
 import { sources } from "@/data/sources";
+import { sections } from "@/lib/sections";
 
 export function SiteFooter() {
   return (
@@ -10,6 +12,20 @@ export function SiteFooter() {
           <p className="mt-2 max-w-sm text-sm leading-6 text-muted-foreground">
             模型、融资和产业地图放在同一张纸上。能读到的公开源直接进页面，读不到的格子仍标示意。
           </p>
+          <nav aria-label="页脚栏目" className="mt-4">
+            <ul className="flex flex-wrap gap-x-4 gap-y-2 text-sm">
+              {sections.map((section) => (
+                <li key={section.id}>
+                  <Link
+                    href={section.href}
+                    className="hover:text-primary focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
+                  >
+                    {section.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
         </div>
         <div>
           <h2 className="font-mono text-[11px] tracking-[0.18em] text-muted-foreground">

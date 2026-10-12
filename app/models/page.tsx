@@ -14,7 +14,7 @@ export default async function ModelsPage() {
   return (
     <>
       <PageIntro
-        index="02  /  模型"
+        section="models"
         title="模型基准"
         cadence="weekly"
         lede="每周更新。列保持为模型、机构、质量、速度、价格。有基准接口时替换这三列，没有时保留示意刻度。"

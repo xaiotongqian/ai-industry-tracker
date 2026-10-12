@@ -14,7 +14,7 @@ export default async function LandscapePage() {
   return (
     <>
       <PageIntro
-        index="04  /  产业地图"
+        section="landscape"
         title="产业地图"
         cadence="weekly"
         lede={`每周更新。版式按矩阵分栏：基础模型、基础设施、智能体、垂直应用、数据与评测、芯片与算力。当前 ${companies.items.length} 家，可筛选、可搜索。`}

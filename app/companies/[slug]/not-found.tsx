@@ -10,7 +10,7 @@ export default function CompanyNotFound() {
       </p>
       <Link
         href="/landscape"
-        className="mt-6 inline-block bg-primary px-3 py-2 text-sm text-primary-foreground"
+        className="mt-6 inline-block bg-primary px-3 py-2 text-sm text-primary-foreground focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
       >
         返回产业地图
       </Link>

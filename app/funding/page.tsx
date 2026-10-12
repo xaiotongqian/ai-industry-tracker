@@ -15,7 +15,7 @@ export default async function FundingPage() {
   return (
     <>
       <PageIntro
-        index="03  /  融资"
+        section="funding"
         title="融资"
         cadence="daily"
         lede="每日更新。只展示源里写明的金额。美元以外的币种不换算，没写金额的保持未披露。"
