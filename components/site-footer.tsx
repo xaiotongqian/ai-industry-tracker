@@ -8,7 +8,7 @@ export function SiteFooter() {
         <div>
           <p className="font-serif text-2xl">纬图</p>
           <p className="mt-2 max-w-sm text-sm leading-6 text-muted-foreground">
-            模型、融资和产业地图放在同一张纸上。这一版只搭骨架，标题和数字都可以整表替换。
+            模型、融资和产业地图放在同一张纸上。能读到的公开源直接进页面，读不到的格子仍标示意。
           </p>
         </div>
         <div>
@@ -25,12 +25,21 @@ export function SiteFooter() {
                 <p className="text-sm text-muted-foreground">
                   {source.covers} · {source.usedOn}
                 </p>
-                <p className="font-mono text-[11px] text-cinnabar">
-                  未接入 · {CADENCE_LABEL[source.cadence]}
+                <p
+                  className={
+                    source.connected
+                      ? "font-mono text-[11px] text-primary"
+                      : "font-mono text-[11px] text-cinnabar"
+                  }
+                >
+                  {source.state} · {CADENCE_LABEL[source.cadence]}
                 </p>
               </li>
             ))}
           </ul>
+          <p className="mt-3 text-xs leading-5 text-muted-foreground">
+            FutureX Capital 与 Epoch AI 的公开数据按 CC BY 4.0 使用。某一轮拉取失败时，对应栏目会改显示示意数据。
+          </p>
         </div>
       </div>
     </footer>

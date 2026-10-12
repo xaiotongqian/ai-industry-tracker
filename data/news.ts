@@ -115,6 +115,9 @@ export const news: NewsItem[] = [
 ];
 
 for (const item of news) {
+  if (!item.companySlug) {
+    throw new Error(`News fixture ${item.id} needs a companySlug`);
+  }
   requireCompany(item.companySlug);
 }
 

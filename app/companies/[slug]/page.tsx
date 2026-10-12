@@ -4,21 +4,23 @@ import { notFound } from "next/navigation";
 import { EmptyNote } from "@/components/empty-note";
 import { Money } from "@/components/money";
 import { getCategory } from "@/data/categories";
-import { companies, getCompany } from "@/data/companies";
-import { roundsForCompany } from "@/data/funding";
-import { modelsForCompany } from "@/data/models";
-import { newsForCompany } from "@/data/news";
+import { loadCompanies } from "@/lib/ingest/companies";
+import { loadFunding } from "@/lib/ingest/funding";
+import { loadModels } from "@/lib/ingest/models";
+import { loadNews } from "@/lib/ingest/news";
 import { formatDate, listingLabel, relativeLabel } from "@/lib/format";
 
-export function generateStaticParams() {
-  return companies.map((company) => ({ slug: company.slug }));
+export async function generateStaticParams() {
+  const { items } = await loadCompanies();
+  return items.map((company) => ({ slug: company.slug }));
 }
 
 export async function generateMetadata({
   params,
 }: PageProps<"/companies/[slug]">): Promise<Metadata> {
   const { slug } = await params;
-  const company = getCompany(slug);
+  const { items } = await loadCompanies();
+  const company = items.find((item) => item.slug === slug);
   if (!company) {
     return { title: "未找到机构" };
   }
@@ -32,13 +34,19 @@ export default async function CompanyPage({
   params,
 }: PageProps<"/companies/[slug]">) {
   const { slug } = await params;
-  const company = getCompany(slug);
+  const [companies, news, funding, models] = await Promise.all([
+    loadCompanies(),
+    loadNews(),
+    loadFunding(),
+    loadModels(),
+  ]);
+  const company = companies.items.find((item) => item.slug === slug);
   if (!company) notFound();
 
   const category = getCategory(company.category);
-  const relatedNews = newsForCompany(company.slug);
-  const relatedRounds = roundsForCompany(company.slug);
-  const relatedModels = modelsForCompany(company.slug);
+  const relatedNews = news.items.filter((item) => item.companySlug === company.slug);
+  const relatedRounds = funding.items.filter((item) => item.companySlug === company.slug);
+  const relatedModels = models.items.filter((item) => item.companySlug === company.slug);
 
   return (
     <article>
@@ -71,10 +79,15 @@ export default async function CompanyPage({
           <p className="mt-2 text-lg text-muted-foreground">{company.nameEn}</p>
         ) : null}
         <p className="mt-4 max-w-2xl text-base leading-7">{company.blurb}</p>
+        {company.profileNote ? (
+          <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">
+            {company.profileNote}
+          </p>
+        ) : null}
       </header>
 
       <dl className="mt-6 grid grid-cols-2 gap-px border border-border bg-border lg:grid-cols-4">
-        <Stat label="成立" value={`${company.founded}`} />
+        <Stat label="成立" value={company.founded == null ? "未知" : `${company.founded}`} />
         <Stat label="总部" value={company.hq} />
         <Stat label="上市状态" value={listingLabel(company.listing)} />
         <div className="bg-card px-4 py-4">
@@ -92,14 +105,27 @@ export default async function CompanyPage({
             <Money value={company.valuation} />
           </p>
           <p className="mt-2 text-sm leading-6 text-muted-foreground">
-            估值槽位预留给 FutureX，每周替换。示意数字不是报价。
+            {valuationNote(company.valuation.status)}
           </p>
         </div>
         <div>
           <h2 className="font-serif text-2xl">外链</h2>
-          <p className="mt-2 font-mono text-sm">{company.domain}</p>
+          {company.website ? (
+            <a
+              href={company.website}
+              target="_blank"
+              rel="noreferrer noopener"
+              className="mt-2 inline-block font-mono text-sm text-primary hover:underline"
+            >
+              {company.domain}
+            </a>
+          ) : (
+            <p className="mt-2 font-mono text-sm">{company.domain}</p>
+          )}
           <p className="mt-2 text-sm leading-6 text-muted-foreground">
-            域名只作占位展示，这一轮不跳转。核对后再接成链接。
+            {company.website
+              ? "官网来自公开名单。没有标成链接的域名仍只是展示。"
+              : "域名只作展示，这一轮不跳转。"}
           </p>
         </div>
       </section>
@@ -112,7 +138,7 @@ export default async function CompanyPage({
           </Link>
         </div>
         {relatedModels.length === 0 ? (
-          <EmptyNote>暂无占位基准行。接入模型源后，点名这家机构的行会出现在这里。</EmptyNote>
+          <EmptyNote>暂无关联模型。</EmptyNote>
         ) : (
           <ul className="divide-y border border-border bg-card">
             {relatedModels.map((row) => (
@@ -122,7 +148,8 @@ export default async function CompanyPage({
               >
                 <span className="font-serif text-lg">{row.name}</span>
                 <span className="font-mono text-xs text-muted-foreground">
-                  质量 {row.quality} · {row.speed} tok/s · ${row.price.toFixed(2)}/M
+                  质量 {Number.isInteger(row.quality) ? row.quality : row.quality.toFixed(1)} ·{" "}
+                  {Math.round(row.speed)} tok/s · ${row.price.toFixed(2)}/M
                 </span>
               </li>
             ))}
@@ -138,7 +165,7 @@ export default async function CompanyPage({
           </Link>
         </div>
         {relatedRounds.length === 0 ? (
-          <EmptyNote>暂无占位融资。每日源接上后，轮次会列在这里。</EmptyNote>
+          <EmptyNote>暂无融资条目。</EmptyNote>
         ) : (
           <ul className="divide-y border border-border bg-card">
             {relatedRounds.map((round) => (
@@ -168,16 +195,29 @@ export default async function CompanyPage({
         </div>
         {relatedNews.length === 0 ? (
           <EmptyNote>
-            暂无关联动态。接入资讯源后，提及该机构的条目会出现在这里。
+            暂无关联动态。提及该机构的条目会出现在这里。
           </EmptyNote>
         ) : (
           <ul className="divide-y border-y border-border">
             {relatedNews.map((item) => (
               <li key={item.id} className="py-4">
                 <p className="font-mono text-xs text-muted-foreground">
-                  {item.desk} · {relativeLabel(item.publishedAt)}
+                  {item.wire} · {item.desk} · {relativeLabel(item.publishedAt, news.fetchedAt)}
                 </p>
-                <h3 className="mt-1 font-serif text-xl">{item.title}</h3>
+                <h3 className="mt-1 font-serif text-xl">
+                  {item.href ? (
+                    <a
+                      href={item.href}
+                      target="_blank"
+                      rel="noreferrer noopener"
+                      className="hover:text-primary"
+                    >
+                      {item.title}
+                    </a>
+                  ) : (
+                    item.title
+                  )}
+                </h3>
                 <p className="mt-1 text-sm leading-6 text-muted-foreground">
                   {item.summary}
                 </p>
@@ -188,6 +228,19 @@ export default async function CompanyPage({
       </section>
     </article>
   );
+}
+
+function valuationNote(status: "mock" | "reported" | "undisclosed" | "pending"): string {
+  switch (status) {
+    case "mock":
+      return "示意数字不是报价。";
+    case "reported":
+      return "取自 FutureX Capital 公开数据集里的报道口径，不是纬图测算。";
+    case "pending":
+      return "公开报道没有换成美元，原文写在数字旁边。";
+    case "undisclosed":
+      return "公开数据集里没有可引用的估值。";
+  }
 }
 
 function Stat({ label, value }: { label: string; value: string }) {

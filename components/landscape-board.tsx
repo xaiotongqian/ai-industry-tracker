@@ -5,12 +5,17 @@ import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Money } from "@/components/money";
 import { categories } from "@/data/categories";
-import { companies } from "@/data/companies";
-import type { CategoryId, Company } from "@/data/types";
+import type { CategoryId, Company, DataOrigin } from "@/data/types";
 
 type Filter = CategoryId | "all";
 
-export function LandscapeBoard() {
+export function LandscapeBoard({
+  companies,
+  origin,
+}: {
+  companies: Company[];
+  origin: DataOrigin;
+}) {
   const [category, setCategory] = useState<Filter>("all");
   const [query, setQuery] = useState("");
 
@@ -23,7 +28,7 @@ export function LandscapeBoard() {
       const haystack = `${company.name} ${company.nameEn} ${company.blurb} ${company.hq}`.toLowerCase();
       return haystack.includes(needle);
     });
-  }, [category, trimmed]);
+  }, [category, trimmed, companies]);
 
   const grouped = category === "all" && trimmed.length === 0;
 
@@ -51,7 +56,11 @@ export function LandscapeBoard() {
           </form>
           <p className="font-mono text-xs text-muted-foreground">
             显示 {filtered.length} / {companies.length}
-            <span className="ml-2 text-cinnabar">样本 · 目标 200+</span>
+            {origin === "demo" ? (
+              <span className="ml-2 text-cinnabar">样本 · 目标 200+ · Demo</span>
+            ) : (
+              <span className="ml-2">公开名单</span>
+            )}
           </p>
         </div>
         <div className="flex flex-wrap gap-1" role="group" aria-label="机构类别">

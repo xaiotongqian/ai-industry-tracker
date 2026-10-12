@@ -32,8 +32,8 @@ export function SiteHeader() {
       <div className="h-1 bg-primary" />
       <div className="border-b border-border">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-1.5 font-mono text-[11px] text-muted-foreground sm:px-6">
-          <p>示意数据 · 外部源均未接入</p>
-          <p className="shrink-0">样本日 2026-10-12</p>
+          <p>公开源按栏目接入 · 示意数据会标 Demo</p>
+          <p className="shrink-0">失败时回退示意</p>
         </div>
       </div>
       <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-4 sm:px-6 md:flex-row md:items-end md:justify-between">

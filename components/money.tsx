@@ -19,6 +19,14 @@ export function Money({
     );
   }
 
+  if (value.status === "reported") {
+    return (
+      <span className={`${className} font-mono tabular-nums`}>
+        {formatUsd(value.usd)}
+      </span>
+    );
+  }
+
   if (value.status === "undisclosed") {
     return <span className={className}>未披露</span>;
   }

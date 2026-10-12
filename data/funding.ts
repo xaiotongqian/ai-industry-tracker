@@ -105,7 +105,7 @@ export const rounds: FundingRound[] = [
 ];
 
 for (const round of rounds) {
-  requireCompany(round.companySlug);
+  if (round.companySlug) requireCompany(round.companySlug);
 }
 
 export function roundsForCompany(slug: string): FundingRound[] {
@@ -114,6 +114,7 @@ export function roundsForCompany(slug: string): FundingRound[] {
 
 export function disclosedFundingTotal(items: readonly FundingRound[]): number {
   return items.reduce((sum, round) => {
-    return sum + (round.amount.status === "mock" ? round.amount.usd : 0);
+    const amount = round.amount;
+    return sum + (amount.status === "mock" || amount.status === "reported" ? amount.usd : 0);
   }, 0);
 }
