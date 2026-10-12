@@ -1,6 +1,5 @@
 "use client";
 
-import { Menu, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -92,11 +91,6 @@ function SiteHeaderFrame({ pathname }: { pathname: string }) {
           aria-controls="site-menu"
           onClick={() => setOpen((value) => !value)}
         >
-          {open ? (
-            <X aria-hidden className="size-4" />
-          ) : (
-            <Menu aria-hidden className="size-4" />
-          )}
           {open ? "关闭" : "栏目"}
         </button>
         <nav aria-label="栏目" className="hidden h-12 items-stretch md:flex">
@@ -113,7 +107,7 @@ function SiteHeaderFrame({ pathname }: { pathname: string }) {
                   active && "text-white",
                 )}
               >
-                <span className={cn("text-[11px]", active ? "text-white/70" : "text-white/40")}>
+                <span className={cn("text-[11px]", active ? "text-white/70" : "text-white/55")}>
                   {section.index}
                 </span>
                 {section.label}
@@ -128,8 +122,7 @@ function SiteHeaderFrame({ pathname }: { pathname: string }) {
       <div
         id="site-menu"
         ref={panelRef}
-        hidden={!open}
-        className="border-t border-white/10 bg-black md:hidden"
+        className={cn("border-t border-white/10 bg-black md:hidden", !open && "hidden")}
       >
         <nav aria-label="栏目" className={cn(frameClass, "py-2")}>
           <ul>
@@ -149,16 +142,16 @@ function SiteHeaderFrame({ pathname }: { pathname: string }) {
                   >
                     <span className="flex items-baseline justify-between gap-3">
                       <span className="flex items-baseline gap-2">
-                        <span className={cn("text-xs", active ? "text-white/70" : "text-white/40")}>
+                        <span className={cn("text-xs", active ? "text-white/70" : "text-white/55")}>
                           {section.index}
                         </span>
                         <span className="text-2xl font-medium tracking-tight">{section.label}</span>
                       </span>
-                      <span className="text-xs text-white/45">
+                      <span className="text-xs text-white/65">
                         {CADENCE_LABEL[section.cadence]}
                       </span>
                     </span>
-                    <span className={cn("mt-1 text-sm", active ? "text-white/70" : "text-white/45")}>
+                    <span className={cn("mt-1 text-sm", active ? "text-white/75" : "text-white/65")}>
                       {section.summary}
                     </span>
                   </Link>

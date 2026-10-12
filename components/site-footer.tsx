@@ -16,7 +16,7 @@ export function SiteFooter() {
       >
         <div>
           <p className="text-3xl font-semibold tracking-tight">纬图</p>
-          <p className="mt-1 text-xs tracking-[0.16em] text-white/45">WEITU</p>
+          <p className="mt-1 text-xs tracking-[0.16em] text-white/60">WEITU</p>
           <p className="mt-5 max-w-sm text-[15px] leading-7 text-white/60">
             模型、融资和产业地图放在同一张纸上。能读到的公开源直接进页面，读不到的格子仍标示意。
           </p>
@@ -50,13 +50,13 @@ export function SiteFooter() {
                 <p className="text-sm text-white/55">
                   {source.covers} · {source.usedOn}
                 </p>
-                <p className={source.connected ? "text-xs text-white/80" : "text-xs text-white/45"}>
+                <p className={source.connected ? "text-xs text-white/80" : "text-xs text-white/65"}>
                   {source.state} · {CADENCE_LABEL[source.cadence]}
                 </p>
               </li>
             ))}
           </ul>
-          <p className="mt-4 text-xs leading-5 text-white/45">
+          <p className="mt-4 text-xs leading-5 text-white/65">
             FutureX Capital 与 Epoch AI 的公开数据按 CC BY 4.0 使用。某一轮拉取失败时，对应栏目会改显示示意数据。
           </p>
         </div>
