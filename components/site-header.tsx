@@ -16,10 +16,6 @@ export function SiteHeader() {
   return <SiteHeaderFrame pathname={pathname} />;
 }
 
-export function SiteHeaderFallback() {
-  return <SiteHeaderFrame pathname="" />;
-}
-
 function SiteHeaderFrame({ pathname }: { pathname: string }) {
   const [open, setOpen] = useState(false);
   const [trackedPath, setTrackedPath] = useState(pathname);
