@@ -13,6 +13,7 @@ export const rounds: FundingRound[] = [
     amount: mock(800_000_000),
     announcedOn: "2026-10-08",
     investors: ["示意基金甲", "示意基金乙"],
+    leadInvestors: ["示意基金甲"],
   },
   {
     id: "r-anthropic",
@@ -101,6 +102,26 @@ export const rounds: FundingRound[] = [
     amount: undisclosed,
     announcedOn: "2026-09-09",
     investors: ["示意基金乙", "示意基金丙"],
+  },
+  {
+    id: "r-unmapped",
+    companySlug: null,
+    companyName: "示意新创",
+    round: "种子轮",
+    roundCategory: "早期",
+    amount: mock(12_000_000),
+    announcedOn: "2026-09-06",
+    investors: ["示意基金甲", "示意基金乙", "示意基金丙", "示意基金丁", "示意基金戊"],
+    leadInvestors: ["示意基金甲"],
+  },
+  {
+    id: "r-pending",
+    companySlug: null,
+    companyName: "示意海外公司",
+    round: "A 轮",
+    amount: { status: "pending", reason: "示意欧元金额，未换算，不计入合计" },
+    announcedOn: "2026-09-04",
+    investors: ["示意基金丙"],
   },
 ];
 
