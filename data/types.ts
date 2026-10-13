@@ -118,17 +118,33 @@ export type ModelsPayload = Loaded<ModelRow> & {
   indexVersion: number | null;
 };
 
+/** Evidence gate from the source. Excerpt text is never stored. */
+export type FundingEvidence = "gated" | "unverified";
+
 export type FundingRound = {
   id: string;
   companySlug: string | null;
   /** Spelling from the source. The ledger falls back to the map name. */
   companyName?: string;
   round: string;
+  /** Source bucket when it adds information beyond `round`. */
+  roundCategory?: string;
   amount: MoneyPlaceholder;
+  /** Source spelling of an adopted USD amount, when the payload included one. */
+  amountLabel?: string;
+  /** Valuation as published. Not converted and not included in the USD total. */
+  valuationLabel?: string;
   announcedOn: string;
   investors: string[];
+  /** Subset of `investors` the source marked as lead. Omitted when the source does not say. */
+  leadInvestors?: string[];
   sourceUrl?: string;
   sourceName?: string;
+  /** External company profile. Omitted when the source did not give one. */
+  profileUrl?: string;
+  evidence?: FundingEvidence;
+  /** Source week key, when it differs from `announcedOn`. */
+  weekId?: string;
 };
 
 export type TrendNote = {
@@ -160,4 +176,9 @@ export type Loaded<T> = {
   sourceHref?: string;
   fetchedAt: string;
   note: string;
+};
+
+export type FundingPayload = Loaded<FundingRound> & {
+  /** Feed-wide count from the source response. Null on the demo fallback. */
+  sourceTotal: number | null;
 };

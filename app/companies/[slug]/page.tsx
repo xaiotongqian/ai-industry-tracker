@@ -9,6 +9,7 @@ import { SectionIndex } from "@/components/section-index";
 import { getCategory } from "@/data/categories";
 import type { ModelRow } from "@/data/types";
 import { formatDate, formatIndex, formatTokenPrice, listingLabel, relativeLabel } from "@/lib/format";
+import { investorBrief } from "@/lib/funding-stats";
 import { loadCompanies } from "@/lib/ingest/companies";
 import { loadFunding } from "@/lib/ingest/funding";
 import { loadModels } from "@/lib/ingest/models";
@@ -182,17 +183,44 @@ export default async function CompanyPage({
           ) : (
             <ul className="border-t border-border">
               {relatedRounds.map((round) => (
-                <li
-                  key={round.id}
-                  className="flex flex-wrap items-baseline justify-between gap-3 border-b border-border py-5"
-                >
-                  <span>
-                    <span className="text-lg font-medium tracking-tight">{round.round}</span>
-                    <span className="ml-3 text-sm text-muted-foreground">
-                      {formatDate(round.announcedOn)}
+                <li key={round.id} className="border-b border-border py-5">
+                  <div className="flex flex-wrap items-baseline justify-between gap-3">
+                    <span>
+                      <span className="text-lg font-medium tracking-tight">{round.round}</span>
+                      <span className="ml-3 text-sm text-muted-foreground">
+                        {formatDate(round.announcedOn)}
+                      </span>
                     </span>
-                  </span>
-                  <Money value={round.amount} />
+                    <Money value={round.amount} />
+                  </div>
+                  <p className="mt-1 text-sm leading-6 text-muted-foreground">
+                    {investorBrief(round, funding.origin)}
+                    {round.sourceUrl ? (
+                      <>
+                        <span aria-hidden> · </span>
+                        <a
+                          href={round.sourceUrl}
+                          target="_blank"
+                          rel="noreferrer noopener"
+                          className={cn("text-link underline-offset-4 hover:underline", focusRing)}
+                        >
+                          {round.sourceName || "来源"}
+                        </a>
+                      </>
+                    ) : round.profileUrl ? (
+                      <>
+                        <span aria-hidden> · </span>
+                        <a
+                          href={round.profileUrl}
+                          target="_blank"
+                          rel="noreferrer noopener"
+                          className={cn("text-link underline-offset-4 hover:underline", focusRing)}
+                        >
+                          源站公司页
+                        </a>
+                      </>
+                    ) : null}
+                  </p>
                 </li>
               ))}
             </ul>

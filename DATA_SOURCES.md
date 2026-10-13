@@ -83,13 +83,25 @@ Epoch 这张表没有质量、速度、价格，所以不拿来填模型页。
 
 `GET https://api-production-3ee5.up.railway.app/api/deals?deal_type=funding&limit=30`
 
-只取 `deal_type=funding`。美元且 `amountValue` 为正数时记为 `reported`。其他币种保留原文，状态 `pending`，不换算。没有金额则 `undisclosed`。`hasEvidence === false` 的金额不采用。不转载 `content` / `evidence` 摘录，只保留结构化字段，并链到 `sourceUrl`。
+只取 `deal_type=funding`。美元且 `amountValue` 为正数时记为 `reported`。其他币种保留原文，状态 `pending`，不换算。没有金额则 `undisclosed`。`hasEvidence === false` 或 `status === "legacy_unverified"` 的金额不采用，行上标「未经证据门」。`ai_extracted` 且 `hasEvidence === true` 标「证据已核」。不转载 `content` / `evidence` 摘录，只保留结构化字段，并链到 `sourceUrl`。
 
-机构名能对上地图才填 `companySlug`，对不上仍列出，但不新造一家机构。
+另外用到、且源里实际有的字段：
+
+- 轮次：`stage`（aifunding）或 `round` / `roundCategory`（Data Cube）。已知英文轮次写成中文标签，认不出的保留原文。
+- 投资人：名字。aifunding 的 `isLead === true` 才标领投。Data Cube 不区分领投。
+- 估值：aifunding 的美元 `valuation` 按原值格式化；其他币种写成「未换算」。Data Cube 的 `valuationRaw` 按原文显示（`$1B+`、人民币都不换算）。`Undisclosed` 不当成估值。估值不计入美元合计。
+- 金额原文：Data Cube 的 `amountRaw`，只在金额已被采用为美元时附在详情里。
+- 公司页：aifunding 的 `companyProfileUrl`。Data Cube 没有这个字段。
+- 条数：响应里的 `meta.total` 或 `total` 写在概览上，说明源里还有更多。页面仍只渲染最近 30 笔。
+- 周次：`weekId` 和公布日不同才显示。
+
+机构名能对上地图才填 `companySlug`，对不上仍列出，但不新造一家机构。概览里的合计、最大一轮和「已入地图」都只按这 30 笔计算。
+
+公开接口给不出、因此页面不展示：投资人各自的出资金额、可转载的证据原文、可靠的行业分类（当前这批 `industry` 为空）、非美元兑美元的汇率、并购（已用 `deal_type=funding` 排除）、以及这 30 笔以外的轮次正文。aifunding.me 被 403 挡住时，也没有它文档里的领投标记、美元估值数字和公司页链接。
 
 限制：Data Cube 的主机写在它自己的页面里，不是 aifunding.me 的域名，接口形态可能变。条目是对方从报道里抽出的，页面提示核对来源。最近 30 笔不是全市场。
 
-失败：两路都空时回退 `data/funding.ts`。示意投资人仍标「示意」。
+失败：两路都空时回退 `data/funding.ts`。示意投资人仍标「示意」。示意账本里另有一笔未入地图、一笔未换算，用来把筛选和状态填上，金额旁仍是示意。
 
 ## 产业地图与机构档案 — FutureX，不足则 YC
 

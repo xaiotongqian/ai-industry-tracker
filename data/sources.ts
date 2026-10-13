@@ -49,7 +49,7 @@ export const sources: DataSource[] = [
     usedOn: "融资、机构页",
     module: "lib/ingest/funding.ts",
     plugIn:
-      "先试 aifunding.me 的公开接口；不通则用 Data Cube 融资页链出的 /api/deals。金额只在美元时计入。失败时回退 data/funding.ts。",
+      "先试 aifunding.me 的公开接口；不通则用 Data Cube 融资页链出的 /api/deals。美元金额才计入合计，估值不换算，证据摘录不转载。失败时回退 data/funding.ts。",
     connected: true,
     state: "已接入 · 公开 JSON",
   },
