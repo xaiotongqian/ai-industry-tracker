@@ -52,11 +52,26 @@ Epoch 这张表没有质量、速度、价格，所以不拿来填模型页。
 - 请求头：`x-api-key`
 - 环境变量：`ARTIFICIAL_ANALYSIS_API_KEY`
 
-没有钥匙时不发请求。不设假钥匙。有钥匙时读取 Intelligence Index、输出 token/s 中位数、输入 token 的美元 / 百万，留下指数最高的 24 行。免费档不提供混合价格，所以价格列在实时状态下标明是输入价。
+没有钥匙时不发请求。不设假钥匙。有钥匙时只读取免费档响应里实际有的字段：
+
+- 质量：`evaluations.artificial_analysis_intelligence_index`
+- 编码：`artificial_analysis_coding_index`
+- 智能体：`artificial_analysis_agentic_index`
+- 六项能力指数：金融会计、战略运营、法律、医疗、工程、经济
+- 速度：`performance.median_output_tokens_per_second`（取整到 token/s）
+- 时延：首 token、首个回答 token、端到端的中位数（秒）
+- 价格：输入、输出、缓存命中、缓存写入的美元 / 百万 token。价格列是输入价
+- 发布日：`release_date`
+- 评测费用：`artificial_analysis_intelligence_index_cost` 的总费用和单任务费用
+- 机构：`model_creator.name`，能对上地图才填 `companySlug`
+
+响应里的 `intelligence_index_version` 写进页面说明。某个指数或价格缺失就留空，不补数。表上保留同时具备质量、速度和输入价、且质量最高的 24 行。本表名次、顶尖档（质量不低于最高分 3 分）和「高于 / 低于中位」由这 24 行算出，不是接口字段。
+
+免费档响应没有、因此页面不展示：数学指数、开放度、多语言指数、单题分数（MMLU、GPQA 等）、混合价格、性能分位数、上下文长度、参数量、模态和供应商明细。
 
 限制：官方接口必须有 key。本仓库默认走示意表。
 
-失败或没有钥匙：回退 `data/models.ts`，三列都标示意，不把别的源的价格和示意质量拼在同一行。
+失败或没有钥匙：回退 `data/models.ts`。示意行带上编码、智能体、能力指数、输出价和时延，只为把版面填满，整表标示意。发布日、缓存价和评测费用在示意行里留空，避免写成假日期或假费用。不把别的源的价格和示意质量拼在同一行。
 
 ## 融资 — AI Funding Tracker
 

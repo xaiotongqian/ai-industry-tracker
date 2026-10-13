@@ -63,18 +63,59 @@ export type NewsItem = {
   href?: string;
 };
 
+/**
+ * Six Artificial Analysis capability indexes from the free language-model payload.
+ * Null when that index was absent for the row.
+ */
+export type ModelCapabilities = {
+  finance: number | null;
+  strategy: number | null;
+  legal: number | null;
+  healthcare: number | null;
+  engineering: number | null;
+  economics: number | null;
+};
+
 export type ModelRow = {
   id: string;
   name: string;
   organization: string;
   /** Null when the lab is not on the map yet. */
   companySlug: string | null;
-  /** 0–100 index. Demo rows are fixtures; live rows use the source index as published. */
+  /** Intelligence Index. Demo rows are fixtures; live rows use the published value. */
   quality: number;
-  /** Tokens per second. */
+  /** Coding Index. Null when the source omitted it. */
+  coding: number | null;
+  /** Agentic Index. Null when the source omitted it. */
+  agentic: number | null;
+  /** Median output tokens per second. */
   speed: number;
-  /** USD per million tokens. */
+  /** USD per million input tokens. */
   price: number;
+  /** USD per million output tokens. */
+  outputPrice: number | null;
+  /** USD per million cache-hit tokens. */
+  cacheHitPrice: number | null;
+  /** USD per million cache-write tokens. */
+  cacheWritePrice: number | null;
+  /** Median seconds to first token. */
+  timeToFirstToken: number | null;
+  /** Median seconds to first answer token. */
+  timeToFirstAnswer: number | null;
+  /** Median end-to-end response seconds. */
+  endToEndSeconds: number | null;
+  /** Published USD cost to run the Intelligence Index. */
+  indexCost: number | null;
+  /** Published USD cost per Intelligence Index task. */
+  indexCostPerTask: number | null;
+  /** ISO date (YYYY-MM-DD) when the source gave one. */
+  releaseDate: string | null;
+  capabilities: ModelCapabilities;
+};
+
+export type ModelsPayload = Loaded<ModelRow> & {
+  /** Intelligence Index major.minor from the free response. Null on the demo fallback. */
+  indexVersion: number | null;
 };
 
 export type FundingRound = {

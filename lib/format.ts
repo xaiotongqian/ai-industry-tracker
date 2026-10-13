@@ -23,7 +23,23 @@ export function formatUsd(amount: number): string {
 }
 
 export function formatTokenPrice(usdPerMillion: number): string {
+  const abs = Math.abs(usdPerMillion);
+  if (abs !== 0 && abs < 0.01) return `$${usdPerMillion.toFixed(4)}`;
+  if (abs !== 0 && abs < 0.1) {
+    return `$${usdPerMillion.toFixed(3).replace(/0+$/, "")}`;
+  }
   return `$${usdPerMillion.toFixed(2)}`;
+}
+
+export function formatIndex(value: number): string {
+  return Number.isInteger(value) ? String(value) : value.toFixed(1);
+}
+
+export function formatSeconds(value: number): string {
+  if (value >= 10) return `${Math.round(value)} 秒`;
+  const rounded = Math.round(value * 10) / 10;
+  const text = Number.isInteger(rounded) ? String(rounded) : rounded.toFixed(1);
+  return `${text} 秒`;
 }
 
 export function formatDate(isoDate: string): string {

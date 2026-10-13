@@ -40,7 +40,7 @@ export const sections: Section[] = [
     label: "模型",
     index: "02",
     cadence: "weekly",
-    summary: "质量、速度与价格对照。",
+    summary: "质量、编码、速度与价格。",
     unit: "个",
     match: (path) => path.startsWith("/models"),
   },
