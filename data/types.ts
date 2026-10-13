@@ -30,12 +30,21 @@ export type MoneyPlaceholder =
   | { status: "undisclosed" }
   | { status: "pending"; reason: string };
 
+/** Set when the row was added from a public list. Editorial rows leave it unset. */
+export type CompanyListSource = "futurex" | "yc";
+
 export type Company = {
   slug: string;
   name: string;
   nameEn: string;
   category: CategoryId;
   blurb: string;
+  /** Short line from a public list, kept apart from the editorial blurb. */
+  tagline?: string;
+  /** Named products from a public list. */
+  products?: string;
+  /** Longer text copied from a public list. Never written for the row. */
+  description?: string;
   founded: number | null;
   hq: string;
   listing: Listing;
@@ -43,10 +52,25 @@ export type Company = {
   domain: string;
   /** Set only when a public source gave an http(s) URL. */
   website?: string;
+  /** Public profile page other than the company site, such as a YC URL. */
+  profileUrl?: string;
   /** Why this profile is thin: seeded from a public list, not the editorial set. */
   profileNote?: string;
   funding: MoneyPlaceholder;
   valuation: MoneyPlaceholder;
+  /** Exchange symbol copied from a public list. */
+  ticker?: string;
+  /** Sector or industry label from a public list, not the six-way category. */
+  sectorLabel?: string;
+  /** YC batch as published, for example "Winter 2024". */
+  batch?: string;
+  /** YC stage token as published, for example "Early". */
+  stage?: string;
+  /** Headcount from a public list. Absent when missing or not positive. */
+  teamSize?: number;
+  /** Labels copied from a public list. */
+  tags?: string[];
+  listSource?: CompanyListSource;
 };
 
 export type NewsItem = {
