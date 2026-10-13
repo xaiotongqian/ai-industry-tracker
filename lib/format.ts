@@ -80,6 +80,28 @@ export function listingLabel(listing: Listing): string {
   }
 }
 
+const SEASON_LABEL: Record<string, string> = {
+  winter: "冬季",
+  spring: "春季",
+  summer: "夏季",
+  fall: "秋季",
+};
+
+/** YC batches are "Season YYYY". Anything else is returned unchanged. */
+export function formatBatch(batch: string): string {
+  const match = /^(Winter|Spring|Summer|Fall)\s+(\d{4})$/i.exec(batch.trim());
+  if (!match) return batch;
+  const season = SEASON_LABEL[match[1].toLowerCase()];
+  return season ? `${match[2]} ${season}` : batch;
+}
+
+/** YC publishes Early and Growth. Other tokens stay as written. */
+export function formatStage(stage: string): string {
+  if (stage === "Early") return "早期";
+  if (stage === "Growth") return "成长";
+  return stage;
+}
+
 export function moneySortValue(value: MoneyPlaceholder): number | null {
   return value.status === "mock" || value.status === "reported" ? value.usd : null;
 }

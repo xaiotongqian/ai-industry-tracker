@@ -61,7 +61,7 @@ export const sources: DataSource[] = [
     usedOn: "产业地图、机构档案",
     module: "lib/ingest/companies.ts",
     plugIn:
-      "读取 futurex.capital/api/public/ai-companies，和编辑样本合并。不足 200 家时用 YC 公开公司名单补位。失败时只留 data/companies.ts。",
+      "读取 futurex.capital/api/public/ai-companies（名称、赛道、估值、上市、代码、标语、产品、官网），和编辑样本合并。不足 200 家时用 YC 公开名单补位，并带上原文介绍、批次、阶段和团队人数。失败时只留 data/companies.ts。",
     connected: true,
     state: "已接入 · 公开 JSON",
   },

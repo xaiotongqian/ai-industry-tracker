@@ -8,6 +8,7 @@ import {
   hostname,
   nameKeys,
   parseReportedValuation,
+  plainText,
   safeHttpUrl,
   slugify,
 } from "@/lib/ingest/text";
@@ -67,6 +68,8 @@ type FuturexCompany = {
   website?: string;
   tagline?: string;
   keyProducts?: string;
+  ticker?: string;
+  sectorEn?: string;
 };
 
 type YcCompany = {
@@ -74,6 +77,7 @@ type YcCompany = {
   slug?: string;
   website?: string | null;
   one_liner?: string | null;
+  long_description?: string | null;
   all_locations?: string | null;
   launched_at?: number | null;
   tags?: string[];
@@ -81,6 +85,10 @@ type YcCompany = {
   status?: string;
   industry?: string;
   subindustry?: string;
+  team_size?: number | null;
+  batch?: string | null;
+  stage?: string | null;
+  url?: string | null;
 };
 
 const YC_TAGS = new Set(["AI", "Generative AI", "Machine Learning"]);
@@ -151,10 +159,10 @@ async function loadCompaniesUncached(): Promise<Loaded<Company>> {
   const parts = [
     `共 ${merged.length} 家。`,
     futurexOk
-      ? `FutureX 新写入 ${futurexAdded} 家，并更新了 ${futurexUpdated} 家已有机构的公开估值。`
+      ? `FutureX 新写入 ${futurexAdded} 家，并给 ${futurexUpdated} 家已有机构补了公开估值、官网、标语或产品（不改简介和类别）。`
       : "FutureX 这一轮没拿到，已有机构的估值仍是示意。",
     ycAdded > 0
-      ? `YC 公开名单补了 ${ycAdded} 家，分类是AI纵横归的，融资和估值未接入。`
+      ? `YC 公开名单补了 ${ycAdded} 家。分类是AI纵横归的，介绍用名单原文，融资和估值未接入。`
       : merged.length < TARGET
         ? `还没有补到 ${TARGET} 家。`
         : "没有再用 YC 补位。",
@@ -213,36 +221,34 @@ function applyFuturex(
   if (existingSlug) {
     const target = merged.find((company) => company.slug === existingSlug);
     if (!target) return "skipped";
-    let updated = false;
-    if (money.status === "reported" || money.status === "pending") {
-      target.valuation = money;
-      updated = true;
-    }
-    const website = safeHttpUrl(row.website);
-    if (website && !target.website) {
-      target.website = website;
-      updated = true;
-    }
+    const updated = attachFuturex(target, row, money);
     return updated ? "updated" : "skipped";
   }
 
   const slug = uniqueSlug(slugify(nameEn || nameZh), used);
   const website = safeHttpUrl(row.website);
+  const tagline = cleanLine(row.tagline);
+  const products = cleanLine(row.keyProducts);
   const company: Company = {
     slug,
     name: nameZh || nameEn,
     nameEn: nameEn || nameZh,
     category: SECTOR[row.sectorSlug ?? ""] ?? "vertical",
-    blurb: futurexBlurb(row),
+    blurb: clip(tagline || products || "FutureX 公开名单中的机构。", 140),
+    tagline: tagline || undefined,
+    products: products || undefined,
     founded: parseYear(row.founded),
     hq: COUNTRY[row.country ?? ""] ?? (row.country?.trim() || "未标注"),
     listing: row.isPubliclyListed ? "public" : "private",
     domain: hostname(website) || "未标注",
     website: website ?? undefined,
     profileNote:
-      "来自 FutureX Capital 公开数据集（CC BY 4.0）。赛道映射到AI纵横的六类，累计融资没有公开总额。",
+      "来自 FutureX Capital 公开数据集（CC BY 4.0）。赛道映射到AI纵横的六类。累计融资没有公开总额，不把估值写成融资。",
     funding: { status: "undisclosed" },
     valuation: money,
+    ticker: cleanTicker(row.ticker),
+    sectorLabel: cleanLine(row.sectorEn, 80) || undefined,
+    listSource: "futurex",
   };
   merged.push(company);
   used.add(slug);
@@ -267,21 +273,33 @@ function addYc(
   if (lookupExact(name, exact) || lookupExact(hostStem(row.website), exact)) return false;
   const slug = uniqueSlug(slugify(row.slug || name), used);
   const website = safeHttpUrl(row.website);
+  const profileUrl = safeHttpUrl(row.url);
   const location = (row.all_locations ?? "").split(";")[0]?.trim();
+  const oneLiner = cleanLine(row.one_liner, 180);
+  const description = cleanDescription(row.long_description, oneLiner);
   const company: Company = {
     slug,
     name,
     nameEn: name,
     category: ycCategory(row),
-    blurb: clip((row.one_liner ?? "").trim(), 140) || "YC 公开名单没有一句话简介。",
+    blurb: clip(oneLiner, 140) || "YC 公开名单没有一句话简介。",
+    description,
     founded: yearFromUnix(row.launched_at),
     hq: location || "未标注",
     listing: row.status === "Public" ? "public" : "private",
     domain: hostname(website) || "未标注",
     website: website ?? undefined,
-    profileNote: "来自 YC 公开公司名单。分类是AI纵横按标签归的，融资和估值没有接入。",
+    profileUrl: profileUrl ?? undefined,
+    profileNote:
+      "来自 YC 公开公司名单。分类是AI纵横按标签归的。融资和估值没有接入，介绍只用名单原文。",
     funding: { status: "undisclosed" },
     valuation: { status: "undisclosed" },
+    sectorLabel: ycSector(row),
+    batch: cleanLine(row.batch, 40) || undefined,
+    stage: cleanLine(row.stage, 40) || undefined,
+    teamSize: positiveCount(row.team_size),
+    tags: cleanTags(row.tags),
+    listSource: "yc",
   };
   merged.push(company);
   used.add(slug);
@@ -309,11 +327,90 @@ function ycCategory(row: YcCompany): CategoryId {
   return "vertical";
 }
 
-function futurexBlurb(row: FuturexCompany): string {
-  const tagline = (row.tagline ?? "").trim();
-  const products = (row.keyProducts ?? "").trim();
-  if (tagline && products) return clip(`${tagline} 主要产品：${products}`, 140);
-  return tagline || products || "FutureX 公开名单中的机构。";
+function attachFuturex(
+  target: Company,
+  row: FuturexCompany,
+  money: Company["valuation"],
+): boolean {
+  let updated = false;
+  if (money.status === "reported" || money.status === "pending") {
+    target.valuation = money;
+    updated = true;
+  }
+  const website = safeHttpUrl(row.website);
+  if (website && !target.website) {
+    target.website = website;
+    updated = true;
+  }
+  if (assignEmpty(target, "tagline", cleanLine(row.tagline))) updated = true;
+  if (assignEmpty(target, "products", cleanLine(row.keyProducts))) updated = true;
+  const ticker = cleanTicker(row.ticker);
+  if (ticker && assignEmpty(target, "ticker", ticker)) updated = true;
+  if (assignEmpty(target, "sectorLabel", cleanLine(row.sectorEn, 80))) updated = true;
+  return updated;
+}
+
+function assignEmpty(
+  target: Company,
+  key: "tagline" | "products" | "ticker" | "sectorLabel",
+  value: string,
+): boolean {
+  if (!value || target[key]) return false;
+  target[key] = value;
+  return true;
+}
+
+function ycSector(row: YcCompany): string | undefined {
+  const industry = cleanLine(row.industry, 80);
+  const sub = cleanLine((row.subindustry ?? "").split("->").pop(), 80);
+  if (industry && sub && sub.toLowerCase() !== industry.toLowerCase()) {
+    return `${industry} · ${sub}`;
+  }
+  return industry || sub || undefined;
+}
+
+function cleanLine(value: string | null | undefined, max = 180): string {
+  const text = (value ?? "").replace(/\s+/g, " ").trim();
+  if (!text) return "";
+  return text.length > max ? clip(text, max) : text;
+}
+
+function cleanTicker(value: string | null | undefined): string | undefined {
+  const text = (value ?? "").trim();
+  if (!text || text.length > 24 || /\s/.test(text)) return undefined;
+  return text;
+}
+
+function cleanDescription(
+  value: string | null | undefined,
+  oneLiner: string,
+): string | undefined {
+  let text = (value ?? "").replace(/\r\n/g, "\n").trim();
+  if (!text) return undefined;
+  if (/[<>]/.test(text)) text = plainText(text);
+  if (!text || text === oneLiner) return undefined;
+  return text;
+}
+
+function positiveCount(value: number | null | undefined): number | undefined {
+  if (typeof value !== "number" || !Number.isFinite(value) || value <= 0) return undefined;
+  if (value > 100_000) return undefined;
+  return Math.round(value);
+}
+
+function cleanTags(tags: string[] | undefined): string[] | undefined {
+  if (!tags) return undefined;
+  const seen = new Set<string>();
+  const result: string[] = [];
+  for (const tag of tags) {
+    const text = tag.replace(/\s+/g, " ").trim();
+    const key = text.toLowerCase();
+    if (!text || seen.has(key)) continue;
+    seen.add(key);
+    result.push(text);
+    if (result.length >= 12) break;
+  }
+  return result.length > 0 ? result : undefined;
 }
 
 function parseYear(value: string | null | undefined): number | null {

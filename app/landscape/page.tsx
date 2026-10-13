@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { DataMark } from "@/components/data-mark";
 import { LandscapeBoard } from "@/components/landscape-board";
+import { LandscapeSummary } from "@/components/landscape-summary";
 import { PageFrame } from "@/components/page-frame";
 import { PageIntro } from "@/components/page-intro";
+import { glanceAtCompanies, toBoardCompany } from "@/lib/company-stats";
 import { loadCompanies } from "@/lib/ingest/companies";
 
 export const metadata: Metadata = {
@@ -18,7 +20,7 @@ export default async function LandscapePage() {
         section="landscape"
         title="产业地图"
         cadence="weekly"
-        lede={`每周更新。按基础模型、基础设施、智能体、垂直应用、数据与评测、芯片与算力分栏。当前 ${companies.items.length} 家，可筛选、可搜索。`}
+        lede={`每周更新。先看规模，再按六类分栏。可以按类别、上市状态和估值筛选，也可以搜索。当前 ${companies.items.length} 家。`}
         mark={
           <DataMark
             origin={companies.origin}
@@ -28,7 +30,12 @@ export default async function LandscapePage() {
           />
         }
       />
-      <LandscapeBoard companies={companies.items} origin={companies.origin} />
+      <LandscapeSummary
+        glance={glanceAtCompanies(companies.items)}
+        origin={companies.origin}
+        fetchedAt={companies.fetchedAt}
+      />
+      <LandscapeBoard companies={companies.items.map(toBoardCompany)} />
     </PageFrame>
   );
 }
