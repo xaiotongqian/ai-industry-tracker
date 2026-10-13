@@ -20,12 +20,12 @@ export const sources: DataSource[] = [
   {
     id: "artificial-analysis",
     name: "Artificial Analysis",
-    covers: "模型质量、速度、价格",
+    covers: "模型指数、速度与价格",
     cadence: "weekly",
     usedOn: "模型",
     module: "lib/ingest/models.ts",
     plugIn:
-      "设置 ARTIFICIAL_ANALYSIS_API_KEY 后请求 /api/v2/language/models/free。没有钥匙时不发请求，回退 data/models.ts。",
+      "设置 ARTIFICIAL_ANALYSIS_API_KEY 后请求 /api/v2/language/models/free，读取 Intelligence、Coding、Agentic、六项能力指数、中位速度与时延、输入输出价格和发布日。没有钥匙时不发请求，回退 data/models.ts 的示意行。",
     connected: false,
     state: "示意回退 · 需要 API key",
   },

@@ -7,11 +7,12 @@ import { Money } from "@/components/money";
 import { PageFrame } from "@/components/page-frame";
 import { SectionIndex } from "@/components/section-index";
 import { getCategory } from "@/data/categories";
+import type { ModelRow } from "@/data/types";
+import { formatDate, formatIndex, formatTokenPrice, listingLabel, relativeLabel } from "@/lib/format";
 import { loadCompanies } from "@/lib/ingest/companies";
 import { loadFunding } from "@/lib/ingest/funding";
 import { loadModels } from "@/lib/ingest/models";
 import { loadNews } from "@/lib/ingest/news";
-import { formatDate, listingLabel, relativeLabel } from "@/lib/format";
 import { focusRing, hoverFade } from "@/lib/ui";
 import { cn } from "@/lib/utils";
 
@@ -145,20 +146,24 @@ export default async function CompanyPage({
           {relatedModels.length === 0 ? (
             <EmptyNote>暂无关联模型。</EmptyNote>
           ) : (
-            <ul className="border-t border-border">
-              {relatedModels.map((row) => (
-                <li
-                  key={row.id}
-                  className="flex flex-wrap items-baseline justify-between gap-3 border-b border-border py-5"
-                >
-                  <span className="text-lg font-medium tracking-tight">{row.name}</span>
-                  <span className="text-sm text-muted-foreground tabular-nums">
-                    质量 {Number.isInteger(row.quality) ? row.quality : row.quality.toFixed(1)} ·{" "}
-                    {Math.round(row.speed)} tok/s · ${row.price.toFixed(2)}/M
-                  </span>
-                </li>
-              ))}
-            </ul>
+            <>
+              {models.origin === "demo" ? (
+                <p className="mb-4 text-sm text-muted-foreground">以下刻度为示意，不是测量。</p>
+              ) : null}
+              <ul className="border-t border-border">
+                {relatedModels.map((row) => (
+                  <li
+                    key={row.id}
+                    className="flex flex-wrap items-baseline justify-between gap-3 border-b border-border py-5"
+                  >
+                    <span className="text-lg font-medium tracking-tight">{row.name}</span>
+                    <span className="text-sm text-muted-foreground tabular-nums">
+                      {modelFacts(row)}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </>
           )}
         </section>
 
@@ -236,6 +241,14 @@ export default async function CompanyPage({
       </article>
     </PageFrame>
   );
+}
+
+function modelFacts(row: ModelRow): string {
+  const parts = [`质量 ${formatIndex(row.quality)}`];
+  if (row.coding != null) parts.push(`编码 ${formatIndex(row.coding)}`);
+  if (row.agentic != null) parts.push(`智能体 ${formatIndex(row.agentic)}`);
+  parts.push(`${Math.round(row.speed)} tok/s`, `${formatTokenPrice(row.price)}/M`);
+  return parts.join(" · ");
 }
 
 function valuationNote(status: "mock" | "reported" | "undisclosed" | "pending"): string {
